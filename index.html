@@ -1,0 +1,3631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track — Financial Intelligence Dashboard</title>
+<style>
+  :root {
+    --primary: #6C63FF;
+    --primary-dark: #5A52D5;
+    --secondary: #00D4AA;
+    --bg: #0F0F1A;
+    --bg2: #161628;
+    --bg3: #1E1E35;
+    --card: #1A1A2E;
+    --card2: #222240;
+    --border: rgba(108,99,255,0.2);
+    --text: #E8E8F0;
+    --text2: #9999BB;
+    --green: #00D4AA;
+    --amber: #FFB84D;
+    --red: #FF6B6B;
+    --shadow: 0 8px 32px rgba(108,99,255,0.12);
+    --radius: 16px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ──────────────────────────────
+     WELCOME SCREEN
+  ────────────────────────────── */
+  #welcome-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(ellipse at 30% 20%, rgba(108,99,255,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(0,212,170,0.08) 0%, transparent 60%),
+                var(--bg);
+  }
+
+  .welcome-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 44px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .logo-icon {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo-text em { color: var(--primary); font-style: normal; }
+
+  .welcome-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(108,99,255,0.12);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+  }
+
+  .welcome-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .welcome-sub {
+    color: var(--text2);
+    font-size: 15px;
+    margin-bottom: 36px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 7px;
+  }
+
+  input, select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1.5px solid rgba(108,99,255,0.18);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 11px 14px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input::placeholder { color: var(--text2); opacity: 0.6; }
+  input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239999BB' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  select option { background: #1E1E35; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-top: 6px;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(108,99,255,0.45);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .welcome-footer {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .welcome-footer span { color: var(--secondary); }
+
+  /* ──────────────────────────────
+     MAIN APP
+  ────────────────────────────── */
+  #main-app { display: none; }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo { font-size: 17px; font-weight: 700; }
+  .topbar-logo em { color: var(--primary); font-style: normal; }
+  .company-chip {
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--secondary);
+  }
+  .topbar-reset {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .topbar-reset:hover { border-color: var(--red); color: var(--red); }
+
+  /* LAYOUT */
+  .app-body { display: flex; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    min-height: calc(100vh - 62px);
+    padding: 20px 12px;
+    position: sticky;
+    top: 62px;
+    height: calc(100vh - 62px);
+    overflow-y: auto;
+  }
+  .progress-wrap { padding: 0 8px; margin-bottom: 20px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 5px; font-weight: 600; }
+  .progress-track { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.4s ease; }
+  .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); padding: 0 8px; margin-bottom: 6px; margin-top: 4px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 2px;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(108,99,255,0.14); color: var(--primary); font-weight: 600; }
+  .nav-item .icon { font-size: 15px; width: 20px; text-align: center; }
+  .nav-status {
+    margin-left: auto;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+  .nav-status.done { background: var(--green); border-color: var(--green); color: white; font-size: 10px; }
+  .nav-item.locked { opacity: 0.4; pointer-events: none; }
+
+  /* CONTENT */
+  .content { flex: 1; padding: 32px 36px; max-width: calc(100% - 240px); }
+
+  /* SECTION HEADER */
+  .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .section-title { font-size: 27px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; }
+  .section-desc { color: var(--text2); font-size: 14.5px; margin-bottom: 30px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .ci-purple { background: rgba(108,99,255,0.18); }
+  .ci-green  { background: rgba(0,212,170,0.18); }
+  .ci-amber  { background: rgba(255,184,77,0.18); }
+  .ci-red    { background: rgba(255,107,107,0.18); }
+
+  /* LTV:CAC ratio badge */
+  .ratio-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+  }
+  .ratio-badge .ratio-x { font-size: 20px; font-weight: 700; opacity: 0.7; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* INPUTS */
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .input-wrap { position: relative; }
+  .input-prefix {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text2);
+    font-weight: 700;
+    font-size: 14px;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .input-prefix ~ input { padding-left: 26px; }
+  .input-suffix {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text2);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-suffix ~ input { padding-right: 34px; }
+
+  /* HELPER NOTE */
+  .helper-note {
+    background: rgba(0,212,170,0.07);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: var(--radius-sm);
+    padding: 11px 15px;
+    font-size: 13px;
+    color: var(--secondary);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .helper-note strong { color: var(--text); }
+
+  /* DYNAMIC COST ROWS */
+  .cost-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+  .cost-row .field { flex: 1; margin-bottom: 0; }
+  .cost-row .field-name { flex: 1.4; }
+  .btn-remove {
+    width: 36px; height: 36px;
+    background: rgba(255,107,107,0.1);
+    border: 1px solid rgba(255,107,107,0.25);
+    border-radius: 8px;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .btn-remove:hover { background: rgba(255,107,107,0.2); }
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 15px;
+    background: rgba(108,99,255,0.08);
+    border: 1px dashed rgba(108,99,255,0.35);
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .btn-add:hover { background: rgba(108,99,255,0.16); }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+  /* RESULT TILES */
+  .tile {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .tile-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .tile-value {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .tile-value.xl { font-size: 36px; }
+  .tile-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+  .c-green { color: var(--green); }
+  .c-amber { color: var(--amber); }
+  .c-red   { color: var(--red); }
+  .c-text  { color: var(--text); }
+
+  /* RUNWAY STATUS BOX */
+  .status-box {
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    margin-top: 4px;
+    border: 1px solid;
+  }
+  .status-box.green { background: rgba(0,212,170,0.07); border-color: rgba(0,212,170,0.25); }
+  .status-box.amber { background: rgba(255,184,77,0.07); border-color: rgba(255,184,77,0.25); }
+  .status-box.red   { background: rgba(255,107,107,0.07); border-color: rgba(255,107,107,0.25); }
+  .status-title { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+  .status-advice { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+
+  /* SECTION NAV */
+  .section-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 24px;
+    margin-top: 12px;
+    border-top: 1px solid var(--border);
+    gap: 12px;
+  }
+  .btn-next {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(108,99,255,0.4); }
+
+  /* AUTOFILL BADGE */
+  .autofill-badge {
+    display: inline-block;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.22);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    vertical-align: middle;
+    margin-left: 5px;
+  }
+
+  /* BREAK-EVEN PROGRESS BAR */
+  .be-prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .be-prog-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .be-prog-pct   { font-size: 15px; font-weight: 800; }
+  .be-prog-track {
+    height: 10px;
+    background: var(--bg3);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+  .be-prog-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.6s ease;
+  }
+  .be-prog-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  /* TIMELINE */
+  .timeline-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    min-width: max-content;
+    padding: 4px 2px 0;
+  }
+  .tl-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+  }
+  .tl-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg3);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .tl-dot.past  { background: var(--primary);   border-color: var(--primary); }
+  .tl-dot.now   { background: var(--secondary); border-color: var(--secondary);
+                   width: 18px; height: 18px;
+                   box-shadow: 0 0 0 4px rgba(0,212,170,0.2); }
+  .tl-dot.be    { background: var(--green);     border-color: var(--green);
+                   width: 18px; height: 18px;
+                   box-shadow: 0 0 0 4px rgba(0,212,170,0.25); }
+  .tl-label {
+    font-size: 11px;
+    color: var(--text2);
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  .tl-label strong { display: block; color: var(--text); font-size: 11px; font-weight: 700; }
+  .tl-line {
+    height: 2px;
+    flex: 1;
+    min-width: 32px;
+    background: var(--border);
+    margin-top: 6px; /* vertically centres with the dot */
+    flex-shrink: 0;
+  }
+  .tl-line.filled { background: var(--primary); }
+  .tl-placeholder {
+    padding: 20px;
+    text-align: center;
+    color: var(--text2);
+    font-size: 13px;
+    background: var(--bg3);
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border);
+  }
+
+  /* ── INVESTOR SCORECARD ── */
+  .score-ring-wrap { display:flex; justify-content:center; margin-bottom:24px; }
+  .score-ring {
+    width: 148px; height: 148px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transition: background 0.5s ease;
+    background: conic-gradient(var(--primary) 0deg, var(--bg3) 0deg);
+  }
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    background: var(--card);
+  }
+  .score-ring-inner { position: relative; z-index: 1; text-align: center; line-height: 1.15; }
+  .score-num { font-size: 44px; font-weight: 900; letter-spacing: -2px; display: block; }
+  .score-denom { font-size: 13px; color: var(--text2); font-weight: 600; }
+
+  .verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 700;
+    border: 1.5px solid;
+    margin-bottom: 8px;
+  }
+  .verdict-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  .param-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .param-icon { font-size: 20px; width: 26px; text-align: center; flex-shrink: 0; }
+  .param-body { flex: 1; min-width: 0; }
+  .param-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .param-detail { font-size: 12px; color: var(--text2); margin-bottom: 6px; line-height: 1.4; }
+  .param-bar-track { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .param-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  .param-score { font-size: 16px; font-weight: 800; min-width: 52px; text-align: right; flex-shrink: 0; }
+  .param-max { font-size: 11px; font-weight: 500; color: var(--text2); }
+
+  .advice-row {
+    display: flex;
+    gap: 10px;
+    padding: 11px 14px;
+    background: rgba(255,184,77,0.06);
+    border: 1px solid rgba(255,184,77,0.2);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: var(--text2);
+  }
+  .advice-row .a-icon { flex-shrink: 0; font-size: 15px; }
+  .advice-row strong { color: var(--text); }
+
+  /* ── FUNDING STAGE ── */
+  .stage-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 800;
+    border: 2px solid;
+  }
+  .stage-details { font-size: 13px; color: var(--text2); margin-top: 8px; line-height: 1.5; }
+  .highlight-tile {
+    background: rgba(108,99,255,0.08) !important;
+    border-color: rgba(108,99,255,0.3) !important;
+  }
+
+  /* ── THEME TOGGLE BUTTON ── */
+  .theme-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 13px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text);
+    font-family: inherit;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .theme-btn:hover { background: var(--bg3); }
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ── LIGHT MODE ── */
+  body.light-mode {
+    --bg:     #F2F3FF;
+    --bg2:    #E9EAFF;
+    --bg3:    #DDDFF5;
+    --card:   #FFFFFF;
+    --card2:  #F7F7FF;
+    --border: rgba(108,99,255,0.16);
+    --text:   #1C1C38;
+    --text2:  #5A5A8C;
+    --shadow: 0 4px 20px rgba(108,99,255,0.07);
+  }
+  body.light-mode .welcome-card {
+    box-shadow: 0 20px 60px rgba(108,99,255,0.14), 0 0 0 1px rgba(108,99,255,0.09);
+  }
+  body.light-mode select option {
+    background: #FFFFFF;
+    color: #1C1C38;
+  }
+  body.light-mode .topbar {
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  /* ── SCENARIO PLANNING ── */
+  .preset-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .preset-btn {
+    padding: 9px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid;
+    background: transparent;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .preset-btn:hover { transform: translateY(-1px); }
+  .preset-btn.pb-worst { color: var(--red);   border-color: rgba(255,107,107,0.4); }
+  .preset-btn.pb-worst:hover { background: rgba(255,107,107,0.1); }
+  .preset-btn.pb-base  { color: var(--text2); border-color: var(--border); }
+  .preset-btn.pb-base:hover  { background: var(--bg3); }
+  .preset-btn.pb-best  { color: var(--green); border-color: rgba(0,212,170,0.4); }
+  .preset-btn.pb-best:hover  { background: rgba(0,212,170,0.1); }
+
+  .slider-field { margin-bottom: 20px; }
+  .slider-field:last-child { margin-bottom: 0; }
+  .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .slider-label { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .slider-val { font-size: 16px; font-weight: 800; min-width: 56px; text-align: right; }
+  .sc-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    background: var(--bg3);
+  }
+  .sc-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 2px solid var(--card);
+    box-shadow: 0 2px 8px rgba(108,99,255,0.45);
+  }
+  .sc-range::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: 2px solid var(--card);
+  }
+  .slider-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* toggle switch */
+  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; display: inline-block; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .toggle-track::before {
+    content: '';
+    position: absolute;
+    left: 3px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--text2);
+    transition: transform 0.2s, background 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-track { background: var(--primary); border-color: var(--primary); }
+  .toggle-switch input:checked + .toggle-track::before { transform: translate(20px, -50%); background: white; }
+
+  /* scenario columns */
+  .sc-columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .sc-col { border-radius: 12px; overflow: hidden; border: 1.5px solid; }
+  .sc-col-head { padding: 12px 14px; font-size: 12px; font-weight: 800; text-align: center; letter-spacing: 0.2px; }
+  .sc-col.sc-worst { border-color: rgba(255,107,107,0.3); }
+  .sc-col.sc-worst .sc-col-head { background: rgba(255,107,107,0.1); color: var(--red); }
+  .sc-col.sc-yours { border-color: rgba(108,99,255,0.4); }
+  .sc-col.sc-yours .sc-col-head { background: rgba(108,99,255,0.12); color: var(--primary); }
+  .sc-col.sc-best  { border-color: rgba(0,212,170,0.3); }
+  .sc-col.sc-best  .sc-col-head { background: rgba(0,212,170,0.08); color: var(--green); }
+  .sc-metric { padding: 11px 14px; border-top: 1px solid rgba(255,255,255,0.04); }
+  .sc-metric-label { font-size: 9.5px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .sc-metric-val { font-size: 16px; font-weight: 800; letter-spacing: -0.4px; transition: color 0.3s; }
+  .sc-metric-sub { font-size: 10px; color: var(--text2); margin-top: 1px; }
+
+  /* TOOLTIPS */
+  .has-tooltip {
+    position: relative;
+    cursor: help;
+  }
+  .has-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    white-space: pre-line;
+    max-width: 270px;
+    min-width: 150px;
+    text-align: left;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    z-index: 9999;
+    font-family: inherit;
+    font-style: normal;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  .has-tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+  /* Tiny ⓘ hint on tile-labels that contain a tooltip value */
+  .tile:has(.has-tooltip) .tile-label::after {
+    content: ' ⓘ';
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--text2);
+    opacity: 0.5;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  /* Score ring tooltip — anchored to the ring container */
+  .score-ring-wrap { position: relative; }
+  .score-ring-wrap.has-tooltip::after { bottom: calc(100% + 6px); }
+
+  /* REPORT BUTTON */
+  .report-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    border: none;
+    border-radius: 28px;
+    padding: 13px 20px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(108,99,255,0.45);
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    letter-spacing: 0.3px;
+  }
+  .report-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(108,99,255,0.55); }
+  .report-fab:active { transform: translateY(0); }
+  .report-fab:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+  .sidebar-report-wrap { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border); padding-left: 4px; padding-right: 4px; }
+  .sidebar-report-btn {
+    width: 100%;
+    padding: 9px 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+  .sidebar-report-btn:hover { opacity: 0.88; }
+  .sidebar-report-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* MOBILE */
+  @media (max-width: 760px) {
+    .sidebar { display: none; }
+    .content { max-width: 100%; padding: 20px 16px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .welcome-card { padding: 28px 20px; }
+    .topbar { padding: 0 16px; }
+    .sc-columns { grid-template-columns: 1fr; }
+  }
+
+  /* ── EDIT PROFILE BUTTON ── */
+  .edit-profile-btn {
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 3px 6px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    line-height: 1;
+    margin-left: 2px;
+  }
+  .edit-profile-btn:hover { color: var(--primary); background: rgba(108,99,255,0.12); }
+
+  /* ── EDIT PROFILE MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.65);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+    animation: fadeUp 0.25s ease;
+  }
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .modal-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--red); background: rgba(255,107,107,0.1); }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     WELCOME SCREEN
+══════════════════════════════════════ -->
+<div id="welcome-screen">
+  <div class="welcome-card">
+    <div class="welcome-logo">
+      <div class="logo-icon">📊</div>
+      <div class="logo-text">Track</div>
+    </div>
+
+    <div class="welcome-eyebrow">✦ Free · No signup required</div>
+    <h1 class="welcome-title">Your Financial Co-Pilot</h1>
+    <p class="welcome-sub">Investor-grade financial intelligence for early-stage startups. Takes 2 minutes to set up.</p>
+
+    <div class="form-group">
+      <label>Company Name</label>
+      <input type="text" id="co-name" placeholder="e.g. Zestify Technologies" autocomplete="off" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Industry</label>
+        <select id="co-industry">
+          <option value="">Select industry…</option>
+          <option>SaaS</option>
+          <option>D2C</option>
+          <option>Fintech</option>
+          <option>Edtech</option>
+          <option>Healthtech</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Stage</label>
+        <select id="co-stage">
+          <option value="">Select stage…</option>
+          <option>Pre-revenue</option>
+          <option>Early Revenue</option>
+          <option>Growth</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Founded Year</label>
+      <input type="number" id="co-year" placeholder="e.g. 2023" min="2000" max="2030" />
+    </div>
+
+    <button class="btn-primary" onclick="saveCompany()">Launch My Dashboard →</button>
+
+    <p class="welcome-footer">Your data stays on your device. <span>100% private.</span></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════ -->
+<div id="main-app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo"><span>📊</span> Track</div>
+      <div class="company-chip" id="company-chip"></div>
+      <button class="edit-profile-btn" onclick="openEditProfile()" title="Edit company profile">✏️</button>
+    </div>
+    <div class="topbar-actions">
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch to light mode">🌙</button>
+      <button class="topbar-reset" onclick="resetApp()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>Completion</span>
+          <span id="pct-label">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="pct-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="nav-label">Sections</div>
+
+      <div class="nav-item active" id="nav-runway" onclick="showSection('runway')">
+        <span class="icon">🏃</span> Runway Calculator
+        <div class="nav-status" id="chk-runway">1</div>
+      </div>
+      <div class="nav-item" id="nav-unit" onclick="showSection('unit')">
+        <span class="icon">⚖️</span> Unit Economics
+        <div class="nav-status" id="chk-unit">2</div>
+      </div>
+      <div class="nav-item" id="nav-breakeven" onclick="showSection('breakeven')">
+        <span class="icon">⚡</span> Break-Even
+        <div class="nav-status" id="chk-breakeven">3</div>
+      </div>
+      <div class="nav-item" id="nav-investor" onclick="showSection('investor')">
+        <span class="icon">🏆</span> Investor Score
+        <div class="nav-status" id="chk-investor">4</div>
+      </div>
+      <div class="nav-item" id="nav-funding" onclick="showSection('funding')">
+        <span class="icon">💰</span> Funding Req.
+        <div class="nav-status" id="chk-funding">5</div>
+      </div>
+      <div class="nav-item" id="nav-scenario" onclick="showSection('scenario')">
+        <span class="icon">🎯</span> Scenario Planning
+        <div class="nav-status" id="chk-scenario">6</div>
+      </div>
+      <div class="sidebar-report-wrap">
+        <button class="sidebar-report-btn" id="sidebar-report-btn" onclick="generateReport()">📄 Generate Report</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ══ SECTION 1: RUNWAY ══ -->
+      <div id="sec-runway">
+
+        <div class="section-eyebrow">🏃 Section 1 of 6</div>
+        <h1 class="section-title">Runway Calculator</h1>
+        <p class="section-desc">Understand how long your current cash will last and when you need to raise.</p>
+
+        <!-- Cash Position -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-green">💵</div>
+            Cash Position
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Current Cash in Bank (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-cash" placeholder="50,00,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Current Monthly Revenue (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-revenue" placeholder="5,00,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Helper note -->
+        <div class="helper-note">
+          💡
+          <span><strong>Tip:</strong> Bifurcating costs into Fixed and Variable is optional but will automatically power your Break-even Analysis!</span>
+        </div>
+
+        <!-- Fixed + Variable side by side -->
+        <div class="grid-2">
+
+          <!-- Fixed Costs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-purple">🔒</div>
+              Fixed Costs (Monthly)
+            </div>
+
+            <div class="field">
+              <label>Salaries &amp; Team (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-salaries" placeholder="8,00,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Office &amp; Rent (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-rent" placeholder="1,00,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Software &amp; Tools (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-software" placeholder="50,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+
+            <div id="fixed-extra"></div>
+            <button class="btn-add" onclick="addCost('fixed')">+ Add Fixed Cost</button>
+          </div>
+
+          <!-- Variable Costs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-amber">📈</div>
+              Variable Costs (Monthly)
+            </div>
+
+            <div class="field">
+              <label>Marketing &amp; Ads (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-marketing" placeholder="2,00,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Delivery / Logistics (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-delivery" placeholder="50,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Payment Gateway Fees (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="r-pgfees" placeholder="20,000" oninput="calcRunway()" min="0" />
+              </div>
+            </div>
+
+            <div id="variable-extra"></div>
+            <button class="btn-add" onclick="addCost('variable')">+ Add Variable Cost</button>
+          </div>
+
+        </div><!-- /grid-2 -->
+
+        <!-- RESULTS (hidden until data entered) -->
+        <div class="card" id="runway-results" style="display:none">
+          <div class="card-head">
+            <div class="card-icon ci-green">📊</div>
+            Results
+          </div>
+
+          <!-- 6 metric tiles -->
+          <div class="grid-3" style="margin-bottom:20px">
+            <div class="tile">
+              <div class="tile-label">Total Fixed Costs</div>
+              <div class="tile-value c-text" id="res-fixed">₹—</div>
+              <div class="tile-sub">per month</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Total Variable Costs</div>
+              <div class="tile-value c-text" id="res-var">₹—</div>
+              <div class="tile-sub">per month</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Total Burn</div>
+              <div class="tile-value c-text" id="res-burn">₹—</div>
+              <div class="tile-sub">per month</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Net Burn (after revenue)</div>
+              <div class="tile-value c-text" id="res-netburn">₹—</div>
+              <div class="tile-sub">per month</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Projected Cash-Out Date</div>
+              <div class="tile-value c-text" id="res-cashout" style="font-size:18px">—</div>
+              <div class="tile-sub" id="res-cashout-sub"></div>
+            </div>
+            <div class="tile" id="runway-tile">
+              <div class="tile-label">Runway</div>
+              <div class="tile-value xl" id="res-runway">—</div>
+              <div class="tile-sub">months</div>
+            </div>
+          </div>
+
+          <!-- Status + advice -->
+          <div class="status-box green" id="runway-status">
+            <div class="status-title" id="runway-status-title"></div>
+            <div class="status-advice" id="runway-status-advice"></div>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" onclick="showSection('unit')">Unit Economics →</button>
+        </div>
+
+      </div><!-- /sec-runway -->
+
+      <!-- ══ SECTION 2: UNIT ECONOMICS ══ -->
+      <div id="sec-unit" style="display:none">
+
+        <div class="section-eyebrow">⚖️ Section 2 of 6</div>
+        <h1 class="section-title">Unit Economics</h1>
+        <p class="section-desc">Calculate your CAC and LTV to understand the true health of your customer acquisition engine.</p>
+
+        <div class="grid-2">
+
+          <!-- CAC Inputs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-red">🎯</div>
+              Customer Acquisition Cost (CAC)
+            </div>
+
+            <div class="field">
+              <label>Total Monthly Performance Marketing Spend (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="u-mktg" placeholder="2,00,000" oninput="calcUnit()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Total Monthly Sales Team Cost (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="u-sales" placeholder="1,50,000" oninput="calcUnit()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>New Customers Acquired This Month</label>
+              <input type="number" id="u-newcusts" placeholder="50" oninput="calcUnit()" min="0" />
+            </div>
+
+            <div id="acq-extra"></div>
+            <button class="btn-add" onclick="addAcqCost()">+ Add Acquisition Cost</button>
+          </div>
+
+          <!-- LTV Inputs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-green">💎</div>
+              Lifetime Value (LTV)
+            </div>
+
+            <div class="field">
+              <label>Avg Monthly Revenue per Customer (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="u-arpu" placeholder="2,500" oninput="calcUnit()" min="0" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Avg Customer Lifetime (months)</label>
+              <input type="number" id="u-lifetime" placeholder="24" oninput="calcUnit()" min="0" />
+            </div>
+            <div class="field">
+              <label>
+                Gross Margin %
+                <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text2);font-size:11px"> — optional</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-suffix">%</span>
+                <input type="number" id="u-gm" placeholder="Leave blank to skip" oninput="calcUnit()" min="0" max="100" />
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /grid-2 -->
+
+        <!-- RESULTS -->
+        <div class="card" id="unit-results" style="display:none">
+          <div class="card-head">
+            <div class="card-icon ci-purple">📊</div>
+            Results
+          </div>
+
+          <div class="grid-2" style="margin-bottom:20px">
+
+            <!-- CAC -->
+            <div class="tile">
+              <div class="tile-label">Customer Acquisition Cost (CAC)</div>
+              <div class="tile-value c-text" id="res-cac">₹—</div>
+              <div class="tile-sub">cost per new customer</div>
+            </div>
+
+            <!-- LTV -->
+            <div class="tile">
+              <div class="tile-label">Lifetime Value (LTV)</div>
+              <div class="tile-value c-text" id="res-ltv">₹—</div>
+              <div class="tile-sub" id="res-ltv-sub">based on ARPU × lifetime</div>
+            </div>
+
+            <!-- LTV:CAC Ratio — spans both columns for visual emphasis -->
+            <div class="tile" id="ratio-tile" style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+              <div>
+                <div class="tile-label">LTV : CAC Ratio</div>
+                <div id="res-ratio" class="ratio-badge c-text">
+                  <span id="res-ratio-num">—</span><span class="ratio-x">x</span>
+                </div>
+                <div class="tile-sub" style="margin-top:4px">target: 3× or higher</div>
+              </div>
+              <div style="text-align:right">
+                <div class="tile-label">Payback Period</div>
+                <div class="tile-value" id="res-payback" style="font-size:28px">—</div>
+                <div class="tile-sub">months to recover CAC</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Status box -->
+          <div class="status-box green" id="unit-status">
+            <div class="status-title" id="unit-status-title"></div>
+            <div class="status-advice" id="unit-status-advice"></div>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" onclick="showSection('runway')">← Runway</button>
+          <button class="btn-next" onclick="showSection('breakeven')">Break-Even →</button>
+        </div>
+
+      </div><!-- /sec-unit -->
+
+      <!-- ══ SECTION 3: BREAK-EVEN ══ -->
+      <div id="sec-breakeven" style="display:none">
+
+        <div class="section-eyebrow">⚡ Section 3 of 6</div>
+        <h1 class="section-title">Break-Even Analysis</h1>
+        <p class="section-desc">Find exactly how many customers you need to become profitable — and how long it'll take to get there.</p>
+
+        <div class="helper-note">
+          🔗 <span><strong>Fixed costs and revenue per customer</strong> are auto-filled from your Runway and Unit Economics inputs. Edit them here if you need a different baseline.</span>
+        </div>
+
+        <div class="grid-2">
+
+          <!-- Auto-filled baseline -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-purple">🔒</div>
+              Cost &amp; Revenue Baseline
+            </div>
+
+            <div class="field">
+              <label>
+                Total Fixed Costs / Month (₹)
+                <span class="autofill-badge">Auto-filled</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="be-fixed" placeholder="From Runway section" oninput="calcBreakeven()" min="0" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>
+                Revenue per Customer / Month (₹)
+                <span class="autofill-badge">Auto-filled</span>
+              </label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="be-arpu" placeholder="From Unit Economics" oninput="calcBreakeven()" min="0" />
+              </div>
+            </div>
+          </div>
+
+          <!-- New inputs -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon ci-amber">📊</div>
+              Your Current Numbers
+            </div>
+
+            <div class="field">
+              <label>Variable Cost per Customer / Month (₹)</label>
+              <div class="input-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" id="be-varpc" placeholder="e.g. 500" oninput="calcBreakeven()" min="0" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Current Number of Customers</label>
+              <input type="number" id="be-custs" placeholder="e.g. 120" oninput="calcBreakeven()" min="0" />
+            </div>
+
+            <div class="field">
+              <label>Monthly Customer Growth Rate (%)</label>
+              <div class="input-wrap">
+                <span class="input-suffix">%</span>
+                <input type="number" id="be-growth" placeholder="e.g. 10" oninput="calcBreakeven()" min="0" max="200" />
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /grid-2 -->
+
+        <!-- RESULTS -->
+        <div class="card" id="be-results" style="display:none">
+          <div class="card-head">
+            <div class="card-icon ci-green">📊</div>
+            Results
+          </div>
+
+          <!-- 4 metric tiles -->
+          <div class="grid-2" style="margin-bottom:24px">
+            <div class="tile">
+              <div class="tile-label">Contribution Margin / Customer</div>
+              <div class="tile-value" id="res-contribution">₹—</div>
+              <div class="tile-sub">revenue minus variable cost per customer</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Break-Even Customers</div>
+              <div class="tile-value xl" id="res-be-custs">—</div>
+              <div class="tile-sub">to cover all fixed costs</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Break-Even Monthly Revenue</div>
+              <div class="tile-value" id="res-be-rev">₹—</div>
+              <div class="tile-sub">needed to reach break-even</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Months to Break-Even</div>
+              <div class="tile-value xl" id="res-be-months">—</div>
+              <div class="tile-sub" id="res-be-date"></div>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div style="margin-bottom:24px">
+            <div class="be-prog-header">
+              <span class="be-prog-label">Progress to Break-Even</span>
+              <span class="be-prog-pct" id="be-prog-pct">0%</span>
+            </div>
+            <div class="be-prog-track">
+              <div class="be-prog-fill" id="be-prog-fill" style="width:0%"></div>
+            </div>
+            <div class="be-prog-ends">
+              <span id="be-prog-start">0 customers today</span>
+              <span id="be-prog-end">— needed</span>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div style="margin-bottom:20px">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px">
+              Journey to Profitability
+            </div>
+            <div class="timeline-scroll">
+              <div class="timeline" id="be-timeline"></div>
+            </div>
+          </div>
+
+          <!-- Status / advice -->
+          <div class="status-box amber" id="be-status">
+            <div class="status-title" id="be-status-title"></div>
+            <div class="status-advice" id="be-status-advice"></div>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" onclick="showSection('unit')">← Unit Economics</button>
+          <button class="btn-next" onclick="showSection('investor')">Investor Score →</button>
+        </div>
+
+      </div><!-- /sec-breakeven -->
+
+      <!-- ══ SECTION 4: INVESTOR READINESS SCORE ══ -->
+      <div id="sec-investor" style="display:none">
+
+        <div class="section-eyebrow">🏆 Section 4 of 6</div>
+        <h1 class="section-title">Investor Readiness Score</h1>
+        <p class="section-desc">A parameter-by-parameter scorecard that shows exactly how investor-ready you are — and what to fix first.</p>
+
+        <!-- One new input -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-amber">📈</div>
+            One More Metric
+          </div>
+          <div class="helper-note" style="margin-bottom:18px">
+            🔄 <span><strong>Everything else is auto-calculated</strong> from your Runway, Unit Economics, and Break-Even data. Just fill in your monthly growth rate below.</span>
+          </div>
+          <div style="max-width:320px">
+            <div class="field">
+              <label>Monthly Revenue Growth Rate (%)</label>
+              <div class="input-wrap">
+                <input type="number" id="inv-growth" placeholder="e.g. 15" oninput="calcInvestor()" min="0" max="500" />
+                <span class="input-suffix">%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Card -->
+        <div class="card" id="investor-scorecard">
+          <div class="card-head">
+            <div class="card-icon ci-purple">🏆</div>
+            Your Investor Scorecard
+          </div>
+
+          <!-- Score ring + verdict -->
+          <div style="text-align:center;margin-bottom:28px">
+            <div class="score-ring-wrap" id="score-ring-wrap">
+              <div class="score-ring" id="score-ring">
+                <div class="score-ring-inner">
+                  <span class="score-num" id="score-num">—</span>
+                  <span class="score-denom">/ 100</span>
+                </div>
+              </div>
+            </div>
+            <div id="verdict-badge" class="verdict-badge" style="color:var(--text2);border-color:var(--border);background:var(--bg3)">Fill in your data above</div>
+            <div class="verdict-text" id="verdict-text"></div>
+          </div>
+
+          <!-- Parameters -->
+          <div id="param-list">
+            <div class="helper-note">
+              ℹ️ <span>Enter your revenue growth rate above and complete the earlier sections to see your full scorecard.</span>
+            </div>
+          </div>
+
+          <!-- Advice -->
+          <div id="inv-advice" style="margin-top:16px"></div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" onclick="showSection('breakeven')">← Break-Even</button>
+          <button class="btn-next" onclick="showSection('funding')">Funding Req. →</button>
+        </div>
+
+      </div><!-- /sec-investor -->
+
+      <!-- ══ SECTION 5: FUNDING REQUIREMENT ══ -->
+      <div id="sec-funding" style="display:none">
+
+        <div class="section-eyebrow">💰 Section 5 of 6</div>
+        <h1 class="section-title">Funding Requirement</h1>
+        <p class="section-desc">Know exactly how much capital to raise, what to use it for, and which funding stage to target.</p>
+
+        <!-- Target Input -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-amber">🎯</div>
+            Runway Target
+          </div>
+          <div class="helper-note" style="margin-bottom:18px">
+            🔄 <span><strong>All funding numbers are auto-calculated</strong> from your Runway, Break-Even, and Investor Score data. Set your desired runway target to personalise the analysis.</span>
+          </div>
+          <div style="max-width:340px">
+            <div class="field">
+              <label>
+                Desired Runway Target (months)
+                <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text2);font-size:11px"> — default: 18</span>
+              </label>
+              <input type="number" id="fund-target" value="18" oninput="calcFunding()" min="1" max="60" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="card" id="funding-results">
+          <div class="card-head">
+            <div class="card-icon ci-green">💰</div>
+            Funding Analysis
+          </div>
+
+          <div class="grid-2" style="margin-bottom:24px">
+            <div class="tile">
+              <div class="tile-label">Funding to Reach Runway Target</div>
+              <div class="tile-value" id="fund-for-runway" style="color:var(--text)">₹—</div>
+              <div class="tile-sub" id="fund-runway-sub">to reach 18 months runway</div>
+            </div>
+            <div class="tile">
+              <div class="tile-label">Funding to Reach Break-Even</div>
+              <div class="tile-value" id="fund-for-be" style="color:var(--text)">₹—</div>
+              <div class="tile-sub" id="fund-be-sub">to sustain until profitable</div>
+            </div>
+          </div>
+
+          <div class="tile highlight-tile" style="margin-bottom:24px">
+            <div class="tile-label" style="color:var(--primary)">⭐ Recommended Raise Amount</div>
+            <div class="tile-value c-green" id="fund-recommended">₹—</div>
+            <div class="tile-sub">Higher of the two above + 20% buffer</div>
+          </div>
+
+          <!-- Stage -->
+          <div style="margin-bottom:20px">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px">Funding Stage to Target</div>
+            <div id="fund-stage-pill"><div class="stage-pill" style="color:var(--text2);border-color:var(--border);background:var(--bg3)">—</div></div>
+            <div class="stage-details" id="fund-stage-details"></div>
+          </div>
+
+          <!-- Advice -->
+          <div id="fund-advice"></div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" onclick="showSection('investor')">← Investor Score</button>
+          <button class="btn-next" onclick="showSection('scenario')">Scenario Planning →</button>
+        </div>
+
+      </div><!-- /sec-funding -->
+
+      <!-- ══ SECTION 6: SCENARIO PLANNING ══ -->
+      <div id="sec-scenario" style="display:none">
+
+        <div class="section-eyebrow">🎯 Section 6 of 6</div>
+        <h1 class="section-title">Scenario Planning</h1>
+        <p class="section-desc">Model how your financials change under different futures. All base numbers come from your earlier inputs — just move the levers.</p>
+
+        <!-- Presets -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-red">⚡</div>
+            Quick Presets
+          </div>
+          <div class="preset-buttons">
+            <button class="preset-btn pb-worst" onclick="applyPreset('worst')">🔴 Worst Case</button>
+            <button class="preset-btn pb-base"  onclick="applyPreset('base')">⚪ Base Case</button>
+            <button class="preset-btn pb-best"  onclick="applyPreset('best')">🟢 Best Case</button>
+          </div>
+        </div>
+
+        <!-- Levers -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-purple">🎚️</div>
+            Scenario Levers
+            <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+              <span style="font-size:12px;font-weight:700;color:var(--text2)">Advanced Mode</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="sc-adv-toggle" onchange="toggleAdvancedMode()">
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Simple mode sliders -->
+          <div id="sc-simple-sliders">
+            <div class="slider-field">
+              <div class="slider-header">
+                <span class="slider-label">Revenue Change</span>
+                <span class="slider-val" id="sc-revenue-val" style="color:var(--text2)">0%</span>
+              </div>
+              <input type="range" class="sc-range" id="sc-revenue" min="-50" max="50" step="5" value="0"
+                     oninput="updateSliderUI(this,'sc-revenue-val',false);calcScenario()">
+              <div class="slider-ends"><span>−50%</span><span>+50%</span></div>
+            </div>
+            <div class="slider-field">
+              <div class="slider-header">
+                <span class="slider-label">Total Cost Change</span>
+                <span class="slider-val" id="sc-cost-val" style="color:var(--text2)">0%</span>
+              </div>
+              <input type="range" class="sc-range" id="sc-cost" min="-30" max="30" step="5" value="0"
+                     oninput="updateSliderUI(this,'sc-cost-val',true);calcScenario()">
+              <div class="slider-ends"><span>−30%</span><span>+30%</span></div>
+            </div>
+            <div class="slider-field" style="margin-bottom:0">
+              <div class="slider-header">
+                <span class="slider-label">Growth Rate Change</span>
+                <span class="slider-val" id="sc-growth-val" style="color:var(--text2)">0%</span>
+              </div>
+              <input type="range" class="sc-range" id="sc-growth" min="-50" max="50" step="5" value="0"
+                     oninput="updateSliderUI(this,'sc-growth-val',false);calcScenario()">
+              <div class="slider-ends"><span>−50%</span><span>+50%</span></div>
+            </div>
+          </div>
+
+          <!-- Advanced mode sliders (hidden by default) -->
+          <div id="sc-adv-sliders" style="display:none">
+            <div class="slider-field">
+              <div class="slider-header">
+                <span class="slider-label">Revenue Change</span>
+                <span class="slider-val" id="sc-adv-revenue-val" style="color:var(--text2)">0%</span>
+              </div>
+              <input type="range" class="sc-range" id="sc-adv-revenue" min="-50" max="50" step="5" value="0"
+                     oninput="updateSliderUI(this,'sc-adv-revenue-val',false);calcScenario()">
+              <div class="slider-ends"><span>−50%</span><span>+50%</span></div>
+            </div>
+            <div class="divider"></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px">Cost Category Adjustments</div>
+            <div id="sc-adv-cost-sliders"></div>
+            <div class="divider"></div>
+            <div class="slider-field" style="margin-bottom:0">
+              <div class="slider-header">
+                <span class="slider-label">Growth Rate Change</span>
+                <span class="slider-val" id="sc-adv-growth-val" style="color:var(--text2)">0%</span>
+              </div>
+              <input type="range" class="sc-range" id="sc-adv-growth" min="-50" max="50" step="5" value="0"
+                     oninput="updateSliderUI(this,'sc-adv-growth-val',false);calcScenario()">
+              <div class="slider-ends"><span>−50%</span><span>+50%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario columns -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-icon ci-purple">📊</div>
+            Scenario Comparison
+          </div>
+
+          <div id="sc-no-data" class="helper-note" style="margin-bottom:16px;display:none">
+            ⚠️ <span>Complete the Runway section first to see scenario projections.</span>
+          </div>
+
+          <div class="sc-columns">
+            <!-- Worst Case: hardcoded -30%/-50%/+20% -->
+            <div class="sc-col sc-worst">
+              <div class="sc-col-head">🔴 Worst Case</div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Monthly Burn</div>
+                <div class="sc-metric-val" id="sc-w-burn">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Runway</div>
+                <div class="sc-metric-val" id="sc-w-runway">—</div>
+                <div class="sc-metric-sub" id="sc-w-runway-sub"></div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Break-Even</div>
+                <div class="sc-metric-val" id="sc-w-be">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Investor Score</div>
+                <div class="sc-metric-val" id="sc-w-score">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Funding Needed</div>
+                <div class="sc-metric-val" id="sc-w-fund">—</div>
+              </div>
+            </div>
+
+            <!-- Your Scenario: slider-controlled, starts as Base -->
+            <div class="sc-col sc-yours">
+              <div class="sc-col-head" id="sc-yours-head">📊 Base Case</div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Monthly Burn</div>
+                <div class="sc-metric-val" id="sc-y-burn">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Runway</div>
+                <div class="sc-metric-val" id="sc-y-runway">—</div>
+                <div class="sc-metric-sub" id="sc-y-runway-sub"></div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Break-Even</div>
+                <div class="sc-metric-val" id="sc-y-be">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Investor Score</div>
+                <div class="sc-metric-val" id="sc-y-score">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Funding Needed</div>
+                <div class="sc-metric-val" id="sc-y-fund">—</div>
+              </div>
+            </div>
+
+            <!-- Best Case: hardcoded +30%/0%/+30% -->
+            <div class="sc-col sc-best">
+              <div class="sc-col-head">🟢 Best Case</div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Monthly Burn</div>
+                <div class="sc-metric-val" id="sc-b-burn">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Runway</div>
+                <div class="sc-metric-val" id="sc-b-runway">—</div>
+                <div class="sc-metric-sub" id="sc-b-runway-sub"></div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Break-Even</div>
+                <div class="sc-metric-val" id="sc-b-be">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Investor Score</div>
+                <div class="sc-metric-val" id="sc-b-score">—</div>
+              </div>
+              <div class="sc-metric">
+                <div class="sc-metric-label">Funding Needed</div>
+                <div class="sc-metric-val" id="sc-b-fund">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="helper-note" style="margin-top:16px;margin-bottom:0">
+            💡 <span>Worst and Best columns are always at their preset values. <strong>Adjust the levers above</strong> to explore your own custom scenario in the middle column.</span>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="btn-next" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" onclick="showSection('funding')">← Funding Req.</button>
+          <button class="btn-next" style="background:linear-gradient(135deg,var(--secondary),var(--primary));cursor:default">✓ Analysis Complete</button>
+        </div>
+
+      </div><!-- /sec-scenario -->
+
+    </div><!-- /content -->
+  </div><!-- /app-body -->
+  <button class="report-fab" id="report-fab" onclick="generateReport()">📄 Investor Report</button>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div id="edit-profile-modal" class="modal-overlay" style="display:none" onclick="closeEditProfile()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title">Edit Company Profile</div>
+        <button class="modal-close" onclick="closeEditProfile()">✕</button>
+      </div>
+      <div class="form-group">
+        <label>Company Name</label>
+        <input type="text" id="edit-co-name" autocomplete="off" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Industry</label>
+          <select id="edit-co-industry">
+            <option value="">Select industry…</option>
+            <option>SaaS</option>
+            <option>D2C</option>
+            <option>Fintech</option>
+            <option>Edtech</option>
+            <option>Healthtech</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Stage</label>
+          <select id="edit-co-stage">
+            <option value="">Select stage…</option>
+            <option>Pre-revenue</option>
+            <option>Early Revenue</option>
+            <option>Growth</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" style="margin-top:4px" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div><!-- /main-app -->
+
+<script>
+// ─────────────────────────────────────
+// State & custom cost tracking
+// ─────────────────────────────────────
+let company = null;
+let fixedExtras    = [];
+let variableExtras = [];
+let acqExtras      = [];
+let _fIdx = 0, _vIdx = 0, _aIdx = 0;
+
+// Computed state shared across sections
+let runwayState = { totalFixed: 0, totalVar: 0, totalBurn: 0, revenue: 0, cash: 0, netBurn: 0, runwayMonths: 0 };
+let unitState   = { ratio: 0, cac: 0, ltv: 0, gmPct: 0 };
+let beState     = { beCustomers: null, beMonths: null, contribution: 0 };
+
+// All section IDs in order
+const SECTIONS = ['runway', 'unit', 'breakeven', 'investor', 'funding', 'scenario'];
+
+// ─────────────────────────────────────
+// Welcome / Company Setup
+// ─────────────────────────────────────
+function saveCompany() {
+  const name     = document.getElementById('co-name').value.trim();
+  const industry = document.getElementById('co-industry').value;
+  const stage    = document.getElementById('co-stage').value;
+  const year     = document.getElementById('co-year').value.trim();
+
+  if (!name)     { shakeField('co-name');     return; }
+  if (!industry) { shakeField('co-industry'); return; }
+  if (!stage)    { shakeField('co-stage');    return; }
+
+  company = { name, industry, stage, year };
+  localStorage.setItem('cfo_company', JSON.stringify(company));
+  launchApp();
+}
+
+function shakeField(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = 'var(--red)';
+  el.focus();
+  setTimeout(() => { el.style.borderColor = ''; }, 1500);
+}
+
+function launchApp() {
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('company-chip').textContent = company.name + ' · ' + company.stage;
+  document.title = company.name + ' — Track';
+  updateProgress();
+}
+
+function resetApp() {
+  if (!confirm('Reset all data and start over?')) return;
+  localStorage.clear();
+  location.reload();
+}
+
+function openEditProfile() {
+  if (!company) return;
+  document.getElementById('edit-co-name').value     = company.name     || '';
+  document.getElementById('edit-co-industry').value = company.industry || '';
+  document.getElementById('edit-co-stage').value    = company.stage    || '';
+  document.getElementById('edit-profile-modal').style.display = 'flex';
+}
+
+function closeEditProfile() {
+  document.getElementById('edit-profile-modal').style.display = 'none';
+}
+
+function saveProfile() {
+  const name     = document.getElementById('edit-co-name').value.trim();
+  const industry = document.getElementById('edit-co-industry').value;
+  const stage    = document.getElementById('edit-co-stage').value;
+
+  if (!name)     { shakeField('edit-co-name');     return; }
+  if (!industry) { shakeField('edit-co-industry'); return; }
+  if (!stage)    { shakeField('edit-co-stage');    return; }
+
+  company.name     = name;
+  company.industry = industry;
+  company.stage    = stage;
+  localStorage.setItem('cfo_company', JSON.stringify(company));
+
+  document.getElementById('company-chip').textContent = company.name + ' · ' + company.stage;
+  document.title = company.name + ' — Track';
+  closeEditProfile();
+}
+
+// ─────────────────────────────────────
+// Navigation
+// ─────────────────────────────────────
+function showSection(id) {
+  SECTIONS.forEach(s => {
+    const el = document.getElementById('sec-' + s);
+    if (el) el.style.display = (s === id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  if (id === 'breakeven') syncBreakevenFields();
+  if (id === 'investor') calcInvestor();
+  if (id === 'funding') calcFunding();
+  if (id === 'scenario') syncScenarioSection();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────
+// Progress
+// ─────────────────────────────────────
+function updateProgress() {
+  const checks = {
+    runway:   () => getNum('r-cash') > 0 || getNum('r-salaries') > 0 || getNum('r-marketing') > 0,
+    unit:     () => getNum('u-arpu') > 0 || getNum('u-mktg') > 0,
+    breakeven:() => getNum('be-custs') > 0,
+    investor: () => getNum('inv-growth') > 0,
+    funding:  () => (getNum('fund-target') > 0 || document.getElementById('fund-target')?.value !== '') && runwayState.netBurn > 0,
+    scenario: () => runwayState.totalBurn > 0,
+  };
+  let done = 0;
+  SECTIONS.forEach((s, i) => {
+    const isDone = checks[s]();
+    const chk = document.getElementById('chk-' + s);
+    if (chk) {
+      if (isDone) { chk.textContent = '✓'; chk.classList.add('done'); done++; }
+      else        { chk.textContent = String(i + 1); chk.classList.remove('done'); }
+    }
+  });
+  const pct = Math.round((done / 6) * 100);
+  document.getElementById('pct-bar').style.width   = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+// ─────────────────────────────────────
+// Indian Number Formatting
+// ─────────────────────────────────────
+function formatInrInput(el) {
+  if (!el) return;
+  const raw = el.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+  if (!raw) { el.value = ''; return; }
+  const num = parseInt(raw, 10);
+  if (isNaN(num)) return;
+  el.value = num.toLocaleString('en-IN');
+  // Place cursor at end (standard for money inputs)
+  try { const l = el.value.length; el.setSelectionRange(l, l); } catch(_) {}
+}
+
+// Run in capture phase so formatting fires BEFORE oninput calc handlers
+document.addEventListener('input', function(e) {
+  if (e.target.classList && e.target.classList.contains('fmt-inr')) {
+    formatInrInput(e.target);
+  }
+}, true);
+
+// ─────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────
+function getNum(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return Math.max(0, parseFloat(el.value.replace(/,/g, '')) || 0);
+}
+
+function fmtINR(n) {
+  if (n === 0) return '₹0';
+  if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
+  if (n >= 100000)   return '₹' + (n / 100000).toFixed(2) + ' L';
+  if (n >= 1000)     return '₹' + (n / 1000).toFixed(1) + 'K';
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+function dateAhead(months) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + Math.round(months));
+  return d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+}
+
+// ─────────────────────────────────────
+// Dynamic Cost Rows
+// ─────────────────────────────────────
+function addCost(type) {
+  const isFixed  = type === 'fixed';
+  const idx      = isFixed ? _fIdx++ : _vIdx++;
+  const rowId    = (isFixed ? 'f' : 'v') + idx;
+  const container = document.getElementById(isFixed ? 'fixed-extra' : 'variable-extra');
+  const arr      = isFixed ? fixedExtras : variableExtras;
+
+  arr.push(rowId);
+
+  const row = document.createElement('div');
+  row.className = 'cost-row';
+  row.id = 'row-' + rowId;
+  row.innerHTML = `
+    <div class="field field-name">
+      <label>Cost Name</label>
+      <input type="text" id="${rowId}-name" placeholder="e.g. Insurance" />
+    </div>
+    <div class="field">
+      <label>Amount (₹)</label>
+      <div class="input-wrap">
+        <span class="input-prefix">₹</span>
+        <input type="text" inputmode="numeric" autocomplete="off" id="${rowId}-val" placeholder="0" class="fmt-inr" oninput="calcRunway()" />
+      </div>
+    </div>
+    <button class="btn-remove" onclick="removeCost('${type}','${rowId}')" title="Remove">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function removeCost(type, rowId) {
+  const row = document.getElementById('row-' + rowId);
+  if (row) row.remove();
+  if (type === 'fixed') {
+    fixedExtras = fixedExtras.filter(x => x !== rowId);
+  } else {
+    variableExtras = variableExtras.filter(x => x !== rowId);
+  }
+  calcRunway();
+}
+
+function addAcqCost() {
+  const rowId = 'a' + _aIdx++;
+  acqExtras.push(rowId);
+  const container = document.getElementById('acq-extra');
+  const row = document.createElement('div');
+  row.className = 'cost-row';
+  row.id = 'row-' + rowId;
+  row.innerHTML = `
+    <div class="field field-name">
+      <label>Cost Name</label>
+      <input type="text" id="${rowId}-name" placeholder="e.g. Events / PR" />
+    </div>
+    <div class="field">
+      <label>Amount (₹)</label>
+      <div class="input-wrap">
+        <span class="input-prefix">₹</span>
+        <input type="text" inputmode="numeric" autocomplete="off" id="${rowId}-val" placeholder="0" class="fmt-inr" oninput="calcUnit()" />
+      </div>
+    </div>
+    <button class="btn-remove" onclick="removeAcqCost('${rowId}')" title="Remove">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function removeAcqCost(rowId) {
+  const row = document.getElementById('row-' + rowId);
+  if (row) row.remove();
+  acqExtras = acqExtras.filter(x => x !== rowId);
+  calcUnit();
+}
+
+// ─────────────────────────────────────
+// RUNWAY CALCULATION
+// ─────────────────────────────────────
+function calcRunway() {
+  // Gather fixed costs
+  const salaries = getNum('r-salaries');
+  const rent     = getNum('r-rent');
+  const software = getNum('r-software');
+  let extraFixed = 0;
+  fixedExtras.forEach(id => { extraFixed += getNum(id + '-val'); });
+
+  // Gather variable costs
+  const marketing = getNum('r-marketing');
+  const delivery  = getNum('r-delivery');
+  const pgfees    = getNum('r-pgfees');
+  let extraVar = 0;
+  variableExtras.forEach(id => { extraVar += getNum(id + '-val'); });
+
+  const totalFixed = salaries + rent + software + extraFixed;
+  const totalVar   = marketing + delivery + pgfees + extraVar;
+  const totalBurn  = totalFixed + totalVar;
+
+  const cash    = getNum('r-cash');
+  const revenue = getNum('r-revenue');
+  const netBurn = Math.max(0, totalBurn - revenue);
+  const runwayMonths = netBurn <= 0 ? Infinity : cash > 0 ? cash / netBurn : 0;
+
+  // Store for use by other sections
+  runwayState = { totalFixed, totalVar, totalBurn, revenue, cash, netBurn, runwayMonths };
+
+  // Nothing to show yet
+  const hasData = cash > 0 || totalBurn > 0;
+  document.getElementById('runway-results').style.display = hasData ? 'block' : 'none';
+  if (!hasData) { updateProgress(); return; }
+
+  // Populate tiles
+  document.getElementById('res-fixed').textContent   = fmtINR(totalFixed);
+  document.getElementById('res-var').textContent     = fmtINR(totalVar);
+  document.getElementById('res-burn').textContent    = fmtINR(totalBurn);
+  document.getElementById('res-netburn').textContent = fmtINR(netBurn);
+
+  // Runway
+  const runwayTile = document.getElementById('runway-tile');
+  const runwayEl   = document.getElementById('res-runway');
+  const cashoutEl  = document.getElementById('res-cashout');
+  const cashoutSub = document.getElementById('res-cashout-sub');
+
+  if (netBurn <= 0) {
+    // Cash-flow positive
+    runwayEl.textContent       = '∞';
+    runwayEl.className         = 'tile-value xl c-green';
+    cashoutEl.textContent      = 'Profitable';
+    cashoutSub.textContent     = 'Revenue exceeds burn';
+    showStatus('green', '🟢 You are cash-flow positive!',
+      'Your revenue fully covers your burn. Focus on scaling efficiently and building a war chest for strategic opportunities.');
+  } else if (cash <= 0) {
+    runwayEl.textContent       = '0';
+    runwayEl.className         = 'tile-value xl c-red';
+    cashoutEl.textContent      = 'No cash';
+    cashoutSub.textContent     = '';
+    showStatus('red', '🔴 No cash reserves',
+      'Immediate action needed. Explore bridge financing or revenue acceleration today.');
+  } else {
+    const months = cash / netBurn;
+    const floored = Math.floor(months);
+    runwayEl.textContent = floored;
+    cashoutEl.textContent = dateAhead(floored);
+    cashoutSub.textContent = floored + ' months from today';
+
+    if (months >= 18) {
+      runwayEl.className = 'tile-value xl c-green';
+      showStatus('green', '🟢 Strong Runway — ' + floored + ' months',
+        'Excellent position. Use this time to hit key milestones before your next raise. Investors respect capital efficiency.');
+    } else if (months >= 6) {
+      runwayEl.className = 'tile-value xl c-amber';
+      showStatus('amber', '🟡 Moderate Runway — ' + floored + ' months',
+        'Start fundraising now — it typically takes 3–6 months to close a round. Identify your top 3 metrics to strengthen before investor conversations.');
+    } else {
+      runwayEl.className = 'tile-value xl c-red';
+      showStatus('red', '🔴 Critical Runway — ' + floored + ' months',
+        'Immediate action required. Consider bridge financing, cutting non-essential costs, and accelerating revenue. Talk to existing investors today.');
+    }
+  }
+
+  // Tooltips on result tiles
+  setTip('res-burn',    `Fixed (${fmtINR(totalFixed)}) + Variable (${fmtINR(totalVar)})\n= ${fmtINR(totalBurn)} / month`);
+  setTip('res-netburn', revenue > 0
+    ? `Burn (${fmtINR(totalBurn)}) − Revenue (${fmtINR(revenue)})\n= ${fmtINR(netBurn)} net / month`
+    : `No revenue entered — Net Burn = Total Burn\n= ${fmtINR(netBurn)} / month`);
+  if (netBurn > 0 && cash > 0) {
+    const _rm = Math.floor(runwayMonths);
+    setTip('res-runway',  `Cash (${fmtINR(cash)}) ÷ Net Burn (${fmtINR(netBurn)})\n= ${_rm} months`);
+    setTip('res-cashout', `Today + ${_rm} months runway\n= ${dateAhead(_rm)}`);
+  } else if (netBurn <= 0) {
+    setTip('res-runway',  'Revenue covers all burn\n→ cash-flow positive, infinite runway');
+    setTip('res-cashout', 'Revenue exceeds burn\n→ no cash-out risk');
+  } else {
+    setTip('res-runway', ''); setTip('res-cashout', '');
+  }
+
+  // Persist & update progress
+  saveInputs();
+  updateProgress();
+}
+
+function showStatus(colorClass, title, advice) {
+  const box = document.getElementById('runway-status');
+  box.className = 'status-box ' + colorClass;
+  document.getElementById('runway-status-title').textContent  = title;
+  document.getElementById('runway-status-advice').textContent = advice;
+}
+
+// ─────────────────────────────────────
+// BREAK-EVEN SYNC + CALCULATION
+// ─────────────────────────────────────
+function syncBreakevenFields() {
+  const beFixed = document.getElementById('be-fixed');
+  const beArpu  = document.getElementById('be-arpu');
+  if (runwayState.totalFixed > 0) { beFixed.value = runwayState.totalFixed; formatInrInput(beFixed); }
+  const arpu = getNum('u-arpu');
+  if (arpu > 0) { beArpu.value = arpu; formatInrInput(beArpu); }
+  calcBreakeven();
+}
+
+function calcBreakeven() {
+  const fixed    = getNum('be-fixed');
+  const arpu     = getNum('be-arpu');
+  const varpc    = getNum('be-varpc');
+  const custs    = getNum('be-custs');
+  const growthPct= getNum('be-growth');
+  const growth   = growthPct / 100;
+
+  const contribution = arpu - varpc;
+
+  const hasData = (fixed > 0 || arpu > 0) && custs > 0;
+  document.getElementById('be-results').style.display = hasData ? 'block' : 'none';
+  if (!hasData) { updateProgress(); return; }
+
+  // ── Contribution margin ──
+  const contribEl = document.getElementById('res-contribution');
+  contribEl.textContent = fmtINR(contribution);
+  contribEl.className = 'tile-value ' + (contribution > 0 ? 'c-green' : contribution < 0 ? 'c-red' : 'c-text');
+
+  // ── Break-even customers ──
+  let beCustomers = null;
+  if (contribution > 0 && fixed > 0) {
+    beCustomers = Math.ceil(fixed / contribution);
+  } else if (contribution <= 0) {
+    beCustomers = Infinity;
+  }
+  const beCustEl = document.getElementById('res-be-custs');
+  beCustEl.textContent = beCustomers === null ? '—'
+                       : beCustomers === Infinity ? '∞'
+                       : beCustomers.toLocaleString('en-IN');
+  beCustEl.className = 'tile-value xl ' +
+    (beCustomers !== null && beCustomers !== Infinity ? 'c-text' : 'c-red');
+
+  // ── Break-even revenue ──
+  const beRevenue = (beCustomers !== null && beCustomers !== Infinity && arpu > 0)
+    ? beCustomers * arpu : null;
+  document.getElementById('res-be-rev').textContent = beRevenue !== null ? fmtINR(beRevenue) : '—';
+
+  // ── Progress % ──
+  let pct = 0;
+  if (beCustomers !== null && beCustomers !== Infinity && beCustomers > 0) {
+    pct = Math.min(100, Math.round((custs / beCustomers) * 100));
+  } else if (custs > 0 && (beCustomers === 0 || custs >= beCustomers)) {
+    pct = 100;
+  }
+  const fillEl = document.getElementById('be-prog-fill');
+  fillEl.style.width = pct + '%';
+  fillEl.style.background = pct >= 100
+    ? 'var(--green)'
+    : pct >= 60
+      ? 'linear-gradient(90deg, var(--primary), var(--secondary))'
+      : 'linear-gradient(90deg, var(--primary), var(--primary-dark))';
+  document.getElementById('be-prog-pct').textContent = pct + '%';
+  document.getElementById('be-prog-pct').style.color =
+    pct >= 100 ? 'var(--green)' : pct >= 60 ? 'var(--secondary)' : 'var(--text)';
+  document.getElementById('be-prog-start').textContent = custs.toLocaleString('en-IN') + ' customers today';
+  document.getElementById('be-prog-end').textContent   =
+    beCustomers !== null && beCustomers !== Infinity ? beCustomers.toLocaleString('en-IN') + ' needed' : '';
+
+  // ── Months to break-even ──
+  let beMonths = null;
+  let beMonthsDisplay = '—';
+  let beDate = '';
+
+  if (beCustomers !== null && beCustomers !== Infinity) {
+    if (custs >= beCustomers) {
+      beMonths = 0;
+      beMonthsDisplay = '0';
+      beDate = 'Already there! 🎉';
+    } else if (growth > 0 && custs > 0) {
+      const raw = Math.log(beCustomers / custs) / Math.log(1 + growth);
+      beMonths = Math.ceil(raw);
+      if (beMonths > 120) {
+        beMonthsDisplay = '>120';
+        beDate = 'Over 10 years at current pace';
+      } else {
+        beMonthsDisplay = String(beMonths);
+        beDate = dateAhead(beMonths);
+      }
+    } else if (growth === 0) {
+      beMonthsDisplay = '∞';
+      beDate = 'No growth — add a growth rate';
+    } else {
+      beMonthsDisplay = '∞';
+      beDate = 'Enter current customer count';
+    }
+  } else if (beCustomers === Infinity) {
+    beMonthsDisplay = '∞';
+    beDate = 'Fix contribution margin first';
+  }
+
+  const beMonthsEl = document.getElementById('res-be-months');
+  beMonthsEl.textContent = beMonthsDisplay;
+  beMonthsEl.className = 'tile-value xl ' +
+    (beMonths === 0 ? 'c-green'
+    : beMonths !== null && beMonths <= 12 ? 'c-green'
+    : beMonths !== null && beMonths <= 24 ? 'c-amber'
+    : 'c-red');
+  document.getElementById('res-be-date').textContent = beDate;
+
+  // ── Timeline ──
+  buildBETimeline(custs, beCustomers, growth, beMonths);
+
+  // ── Status / advice ──
+  if (contribution <= 0) {
+    setBeStatus('red', '🔴 Negative Contribution Margin',
+      'Your variable cost per customer (' + fmtINR(varpc) + ') exceeds revenue per customer (' + fmtINR(arpu) + '). '
+      + 'You lose money on every additional customer. Fix pricing or reduce variable costs before scaling further.');
+  } else if (beMonths === 0) {
+    setBeStatus('green', '🟢 You\'ve Already Reached Break-Even!',
+      'Your current customer base covers all fixed costs. Focus on profitability margin expansion — every new customer now adds pure profit.');
+  } else if (beMonths !== null && beMonths <= 6) {
+    setBeStatus('green', '🟢 Break-Even Is Very Close — ' + beMonths + ' months',
+      'You\'re on track. Protect your growth rate and avoid adding major fixed costs before crossing this milestone.');
+  } else if (beMonths !== null && beMonths <= 18) {
+    setBeStatus('amber', '🟡 Break-Even in ' + beMonths + ' Months',
+      'Achievable, but keep an eye on customer churn. Consider whether increasing ARPU or accelerating acquisition can close the gap faster.');
+  } else {
+    setBeStatus('red', '🔴 Break-Even Is ' + (beMonths !== null ? beMonths + ' Months Away' : 'Out of Sight'),
+      'At current trajectory, this will take too long. Evaluate whether you can meaningfully increase growth rate, raise prices, or cut fixed costs.');
+  }
+
+  // Store for S5 (Funding)
+  beState = { beCustomers, beMonths, contribution };
+
+  // Tooltips
+  setTip('res-contribution',
+    `ARPU (${fmtINR(arpu)}) − Variable Cost/customer (${fmtINR(varpc)})\n= ${fmtINR(contribution)} contribution margin`);
+  if (beCustomers !== null && beCustomers !== Infinity && contribution > 0) {
+    setTip('res-be-custs',
+      `Fixed Costs (${fmtINR(fixed)}) ÷ Contribution Margin (${fmtINR(contribution)})\n= ${beCustomers} customers to break even`);
+  } else { setTip('res-be-custs', ''); }
+  if (beCustomers !== null && beCustomers !== Infinity && arpu > 0) {
+    setTip('res-be-rev',
+      `${beCustomers} break-even customers × ARPU (${fmtINR(arpu)})\n= ${fmtINR(beCustomers * arpu)} / month`);
+  } else { setTip('res-be-rev', ''); }
+  if (beMonths !== null && beMonths > 0 && growth > 0 && custs > 0 && beCustomers !== null && beCustomers !== Infinity) {
+    setTip('res-be-months',
+      `log(${beCustomers} ÷ ${custs}) ÷ log(1 + ${growthPct}%)\n= ${beMonths} months to break even`);
+  } else if (beMonths === 0) {
+    setTip('res-be-months',
+      `Current customers (${custs}) ≥ break-even target (${beCustomers})\n→ already at break-even!`);
+  } else { setTip('res-be-months', ''); }
+
+  saveInputs();
+  updateProgress();
+}
+
+function buildBETimeline(custs, beCustomers, growth, beMonths) {
+  const el = document.getElementById('be-timeline');
+
+  if (!custs || beCustomers === null || beCustomers === Infinity || beMonths === null) {
+    const msg = beCustomers === Infinity
+      ? 'Fix your contribution margin to see the timeline.'
+      : 'Enter current customers and a growth rate to see your journey.';
+    el.innerHTML = '<div class="tl-placeholder">' + msg + '</div>';
+    return;
+  }
+
+  if (beMonths === 0) {
+    el.innerHTML = '<div class="tl-placeholder" style="color:var(--green);border-color:rgba(0,212,170,0.3);background:rgba(0,212,170,0.07)">🎉 Already at break-even! Every new customer adds profit.</div>';
+    return;
+  }
+
+  // Cap at 60 months for display; always include month 0 and break-even month
+  const displayMonths = Math.min(beMonths, 60);
+  const STEPS = Math.min(5, displayMonths); // up to 5 intermediate points
+  const interval = displayMonths / STEPS;
+
+  // Build checkpoint months: 0, evenly spaced steps, then break-even
+  const checkpoints = new Set([0]);
+  for (let i = 1; i <= STEPS; i++) checkpoints.add(Math.round(i * interval));
+  checkpoints.add(displayMonths);
+  const months = [...checkpoints].sort((a, b) => a - b);
+
+  el.innerHTML = '';
+  months.forEach((m, idx) => {
+    const c = m === 0 ? custs : Math.round(custs * Math.pow(1 + growth, m));
+    const isNow = m === 0;
+    const isBE  = m >= beMonths;
+    const isPast = false; // all future for now (today = start)
+
+    const nodeEl = document.createElement('div');
+    nodeEl.className = 'tl-node';
+
+    const dot = document.createElement('div');
+    dot.className = 'tl-dot' + (isNow ? ' now' : isBE ? ' be' : '');
+
+    const lbl = document.createElement('div');
+    lbl.className = 'tl-label';
+    lbl.innerHTML = (isNow
+        ? '<strong>Today</strong>'
+        : isBE
+          ? '<strong>Break-even</strong>'
+          : '<strong>+' + m + ' mo</strong>')
+      + '<br>' + c.toLocaleString('en-IN') + ' custs';
+
+    nodeEl.appendChild(dot);
+    nodeEl.appendChild(lbl);
+    el.appendChild(nodeEl);
+
+    if (idx < months.length - 1) {
+      const line = document.createElement('div');
+      line.className = 'tl-line';
+      el.appendChild(line);
+    }
+  });
+}
+
+function setBeStatus(colorClass, title, advice) {
+  const box = document.getElementById('be-status');
+  box.className = 'status-box ' + colorClass;
+  document.getElementById('be-status-title').textContent  = title;
+  document.getElementById('be-status-advice').textContent = advice;
+}
+
+// ─────────────────────────────────────
+// UNIT ECONOMICS CALCULATION
+// ─────────────────────────────────────
+function calcUnit() {
+  const mktg     = getNum('u-mktg');
+  const sales    = getNum('u-sales');
+  const newCusts = getNum('u-newcusts');
+  const arpu     = getNum('u-arpu');
+  const lifetime = getNum('u-lifetime');
+  const gmRaw    = document.getElementById('u-gm').value.trim();
+  const gm       = gmRaw !== '' ? parseFloat(gmRaw) / 100 : null;
+
+  let extraAcq = 0;
+  acqExtras.forEach(id => { extraAcq += getNum(id + '-val'); });
+
+  const totalAcqSpend = mktg + sales + extraAcq;
+
+  // Need at least one meaningful input to show results
+  const hasData = totalAcqSpend > 0 || arpu > 0 || lifetime > 0;
+  document.getElementById('unit-results').style.display = hasData ? 'block' : 'none';
+  if (!hasData) { updateProgress(); return; }
+
+  // ── CAC ──
+  const cac = (totalAcqSpend > 0 && newCusts > 0) ? totalAcqSpend / newCusts : null;
+  document.getElementById('res-cac').textContent = cac !== null ? fmtINR(cac) : '—';
+
+  // ── LTV ──
+  let ltv = null;
+  let ltvSub = 'based on ARPU × lifetime';
+  if (arpu > 0 && lifetime > 0) {
+    ltv = arpu * lifetime;
+    if (gm !== null) {
+      ltv = ltv * gm;
+      ltvSub = 'ARPU × lifetime × ' + (gm * 100).toFixed(0) + '% margin';
+    }
+  }
+  document.getElementById('res-ltv').textContent = ltv !== null ? fmtINR(ltv) : '—';
+  document.getElementById('res-ltv-sub').textContent = ltvSub;
+
+  // ── LTV:CAC Ratio ──
+  const ratioNumEl = document.getElementById('res-ratio-num');
+  const ratioBadge = document.getElementById('res-ratio');
+  const paybackEl  = document.getElementById('res-payback');
+
+  if (ltv !== null && cac !== null && cac > 0) {
+    const ratio = ltv / cac;
+    ratioNumEl.textContent = ratio.toFixed(1);
+
+    let ratioColor, statusColor, statusTitle, statusAdvice;
+    if (ratio >= 3) {
+      ratioColor   = 'c-green';
+      statusColor  = 'green';
+      statusTitle  = '🟢 Healthy Unit Economics — ' + ratio.toFixed(1) + 'x LTV:CAC';
+      statusAdvice = 'Your LTV:CAC of ' + ratio.toFixed(1) + 'x is investor-grade. This is a strong signal of product–market fit. '
+                   + 'Focus on reducing your payback period to improve cash efficiency further.';
+    } else if (ratio >= 1) {
+      ratioColor   = 'c-amber';
+      statusColor  = 'amber';
+      statusTitle  = '🟡 Marginal Unit Economics — ' + ratio.toFixed(1) + 'x LTV:CAC';
+      statusAdvice = 'You\'re recovering your acquisition cost, but the margin is thin. '
+                   + 'Experiment with increasing ARPU, improving retention, or reducing CAC through organic and referral channels.';
+    } else {
+      ratioColor   = 'c-red';
+      statusColor  = 'red';
+      statusTitle  = '🔴 Negative Unit Economics — ' + ratio.toFixed(1) + 'x LTV:CAC';
+      statusAdvice = 'You\'re spending more to acquire a customer than you\'ll ever earn back. '
+                   + 'Pause paid channels immediately and focus on product retention and reducing churn before scaling acquisition again.';
+    }
+
+    ratioBadge.className = 'ratio-badge ' + ratioColor;
+    paybackEl.className  = 'tile-value ' + ratioColor;
+
+    // Payback period = CAC ÷ monthly revenue per customer
+    if (arpu > 0) {
+      const payback = cac / arpu;
+      paybackEl.textContent = payback.toFixed(1);
+    } else {
+      paybackEl.textContent = '—';
+    }
+
+    const unitBox = document.getElementById('unit-status');
+    unitBox.className = 'status-box ' + statusColor;
+    document.getElementById('unit-status-title').textContent  = statusTitle;
+    document.getElementById('unit-status-advice').textContent = statusAdvice;
+
+  } else {
+    ratioNumEl.textContent = '—';
+    ratioBadge.className   = 'ratio-badge c-text';
+    paybackEl.textContent  = '—';
+    paybackEl.className    = 'tile-value c-text';
+    document.getElementById('unit-status').className  = 'status-box amber';
+    document.getElementById('unit-status-title').textContent  = '💡 Fill in both CAC and LTV inputs to see your ratio';
+    document.getElementById('unit-status-advice').textContent = 'Enter acquisition spend + new customers (for CAC), and ARPU + lifetime (for LTV).';
+  }
+
+  // Store computed unit state for S4/S5
+  const _cacVal = (totalAcqSpend > 0 && newCusts > 0) ? totalAcqSpend / newCusts : 0;
+  let _ltvVal = 0;
+  if (arpu > 0 && lifetime > 0) {
+    _ltvVal = gm !== null ? arpu * lifetime * gm : arpu * lifetime;
+  }
+  unitState = {
+    ratio:  (_ltvVal > 0 && _cacVal > 0) ? _ltvVal / _cacVal : 0,
+    cac:    _cacVal,
+    ltv:    _ltvVal,
+    gmPct:  gm !== null ? gm * 100 : 0,
+  };
+
+  // Tooltips
+  if (cac !== null) {
+    setTip('res-cac', `Acq. Spend (${fmtINR(totalAcqSpend)}) ÷ ${newCusts} new customers\n= ${fmtINR(cac)} per customer`);
+  } else { setTip('res-cac', ''); }
+
+  if (ltv !== null) {
+    setTip('res-ltv', gm !== null
+      ? `ARPU (${fmtINR(arpu)}) × ${lifetime} mo × ${(gm * 100).toFixed(0)}% GM\n= ${fmtINR(ltv)}`
+      : `ARPU (${fmtINR(arpu)}) × Lifetime (${lifetime} mo)\n= ${fmtINR(ltv)}`);
+  } else { setTip('res-ltv', ''); }
+
+  if (unitState.ratio > 0 && cac !== null && ltv !== null) {
+    setTip('res-ratio',   `LTV (${fmtINR(ltv)}) ÷ CAC (${fmtINR(cac)})\n= ${unitState.ratio.toFixed(2)}x ratio`);
+    setTip('res-payback', arpu > 0
+      ? `CAC (${fmtINR(cac)}) ÷ ARPU (${fmtINR(arpu)})\n= ${(cac / arpu).toFixed(1)} months to recover CAC`
+      : '');
+  } else { setTip('res-ratio', ''); setTip('res-payback', ''); }
+
+  saveInputs();
+  updateProgress();
+}
+
+// ─────────────────────────────────────
+// INVESTOR READINESS SCORE
+// ─────────────────────────────────────
+function calcInvestor() {
+  const { totalBurn, revenue, runwayMonths, netBurn } = runwayState;
+  const gmPct    = parseFloat(document.getElementById('u-gm')?.value || '0') || 0;
+  const ratio    = unitState.ratio || 0;
+  const revGrowth = getNum('inv-growth');
+  const burnEff  = totalBurn > 0 ? revenue / totalBurn : 0;
+  const rm       = runwayMonths === Infinity ? 999 : (runwayMonths || 0);
+
+  // ── Scoring ──
+  const runwayScore    = rm >= 18 ? 20 : rm >= 12 ? 15 : rm >= 6 ? 10 : 5;
+  const ltvcacScore    = ratio >= 5 ? 25 : ratio >= 3 ? 20 : ratio >= 1 ? 10 : 0;
+  const revGrowthScore = revGrowth >= 20 ? 25 : revGrowth >= 10 ? 18 : revGrowth >= 5 ? 10 : 5;
+  const gmScore        = gmPct >= 60 ? 15 : gmPct >= 40 ? 10 : gmPct >= 20 ? 5 : 2;
+  const burnScore      = burnEff >= 0.75 ? 15 : burnEff >= 0.5 ? 10 : burnEff >= 0.25 ? 5 : 2;
+  const total          = runwayScore + ltvcacScore + revGrowthScore + gmScore + burnScore;
+
+  // ── Score ring ──
+  const scoreColor = total >= 85 ? 'var(--green)' : total >= 70 ? 'var(--amber)' : total >= 50 ? 'var(--primary)' : 'var(--red)';
+  const deg = Math.round((total / 100) * 360);
+  const ring = document.getElementById('score-ring');
+  ring.style.background = `conic-gradient(${scoreColor} ${deg}deg, var(--bg3) ${deg}deg)`;
+  const numEl = document.getElementById('score-num');
+  numEl.textContent = total;
+  numEl.style.color = scoreColor;
+
+  // ── Verdict ──
+  const badge = document.getElementById('verdict-badge');
+  const vText = document.getElementById('verdict-text');
+  if (total >= 85) {
+    badge.textContent = '🚀 Series A Ready';
+    badge.style.cssText = 'background:rgba(0,212,170,0.12);border-color:rgba(0,212,170,0.35);color:var(--green)';
+    vText.textContent = 'Your fundamentals are strong. You\'re ready for institutional investor conversations.';
+  } else if (total >= 70) {
+    badge.textContent = '📈 Almost Investor-Ready';
+    badge.style.cssText = 'background:rgba(255,184,77,0.12);border-color:rgba(255,184,77,0.35);color:var(--amber)';
+    vText.textContent = 'A few targeted improvements and you\'ll be investor-ready. Focus on the weak parameters below.';
+  } else if (total >= 50) {
+    badge.textContent = '🌱 Early Stage';
+    badge.style.cssText = 'background:rgba(108,99,255,0.12);border-color:rgba(108,99,255,0.35);color:var(--primary)';
+    vText.textContent = 'You have a foundation. Prove out the key metrics before approaching institutional investors.';
+  } else {
+    badge.textContent = '🔧 Not Investor-Ready Yet';
+    badge.style.cssText = 'background:rgba(255,107,107,0.12);border-color:rgba(255,107,107,0.35);color:var(--red)';
+    vText.textContent = 'Focus on product-market fit and unit economics before approaching investors.';
+  }
+
+  // ── Parameters ──
+  const params = [
+    {
+      icon: '🏃', name: 'Runway', score: runwayScore, max: 20,
+      detail: rm >= 999 ? 'Cash-flow positive — infinite runway' : Math.floor(rm) + ' months runway',
+      advice: runwayScore < 20 ? 'Extend runway by cutting non-core costs or growing revenue. Investors want 18+ months.' : null
+    },
+    {
+      icon: '⚖️', name: 'LTV:CAC Ratio', score: ltvcacScore, max: 25,
+      detail: ratio > 0 ? ratio.toFixed(1) + 'x ratio' : 'Complete Unit Economics section to see this',
+      advice: ltvcacScore < 25 ? 'Improve LTV via retention and ARPU growth. Reduce CAC through organic and referral channels.' : null
+    },
+    {
+      icon: '📈', name: 'Revenue Growth', score: revGrowthScore, max: 25,
+      detail: revGrowth > 0 ? revGrowth + '% monthly growth rate' : 'Enter monthly growth rate above',
+      advice: revGrowthScore < 25 ? 'Target 15–20% MoM growth. Benchmark against comparable stage companies.' : null
+    },
+    {
+      icon: '💹', name: 'Gross Margin', score: gmScore, max: 15,
+      detail: gmPct > 0 ? gmPct + '% gross margin' : 'Enter Gross Margin % in Unit Economics section',
+      advice: gmScore < 15 ? 'Target 60%+ gross margin. Renegotiate vendor costs or shift to higher-margin offerings.' : null
+    },
+    {
+      icon: '🔥', name: 'Burn Efficiency', score: burnScore, max: 15,
+      detail: totalBurn > 0 ? (burnEff * 100).toFixed(0) + '% of monthly burn covered by revenue' : 'Enter revenue and burn in Runway section',
+      advice: burnScore < 15 ? 'Revenue should cover 75%+ of burn. Grow MRR relative to your fixed cost base.' : null
+    },
+  ];
+
+  const paramList = document.getElementById('param-list');
+  paramList.innerHTML = '';
+  params.forEach(p => {
+    const pct   = p.max > 0 ? (p.score / p.max) * 100 : 0;
+    const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
+    paramList.innerHTML += `
+      <div class="param-row">
+        <div class="param-icon">${p.icon}</div>
+        <div class="param-body">
+          <div class="param-name">${p.name}</div>
+          <div class="param-detail">${p.detail}</div>
+          <div class="param-bar-track">
+            <div class="param-bar-fill" style="width:${pct}%;background:${color}"></div>
+          </div>
+        </div>
+        <div class="param-score" style="color:${color}">${p.score}<span class="param-max"> /${p.max}</span></div>
+      </div>`;
+  });
+
+  // ── Advice ──
+  const adviceEl = document.getElementById('inv-advice');
+  const weak = params.filter(p => p.advice);
+  if (weak.length === 0) {
+    adviceEl.innerHTML = '<div class="helper-note">🎉 <span>All parameters are strong — you\'re investor-ready across the board!</span></div>';
+  } else {
+    let html = '<div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px">💡 Action Plan</div>';
+    weak.forEach(p => {
+      html += `<div class="advice-row"><span class="a-icon">${p.icon}</span><span><strong>${p.name}:</strong> ${p.advice}</span></div>`;
+    });
+    adviceEl.innerHTML = html;
+  }
+
+  // Tooltip on score ring (show parameter breakdown formula)
+  setTip('score-ring-wrap',
+    `Runway (20pts):          ${runwayScore}\nLTV:CAC (25pts):        ${ltvcacScore}\nRevenue Growth (25pts): ${revGrowthScore}\nGross Margin (15pts):   ${gmScore}\nBurn Efficiency (15pts):${burnScore}\n──────────────────\n= ${total} / 100`);
+
+  saveInputs();
+  updateProgress();
+}
+
+// ─────────────────────────────────────
+// FUNDING REQUIREMENT CALCULATOR
+// ─────────────────────────────────────
+function calcFunding() {
+  const targetMonths = getNum('fund-target') || 18;
+  const { netBurn, cash } = runwayState;
+  const { beMonths }      = beState;
+
+  document.getElementById('fund-runway-sub').textContent = `to reach ${targetMonths} months runway`;
+
+  if (netBurn <= 0 && cash <= 0) {
+    ['fund-for-runway','fund-for-be','fund-recommended'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    document.getElementById('fund-be-sub').textContent = 'Complete the Runway section first';
+    document.getElementById('fund-stage-details').textContent = '';
+    document.getElementById('fund-stage-pill').innerHTML = '<div class="stage-pill" style="color:var(--text2);border-color:var(--border);background:var(--bg3)">—</div>';
+    document.getElementById('fund-advice').innerHTML = '';
+    return;
+  }
+
+  // 1. Funding for runway target
+  const needed          = netBurn * targetMonths;
+  const fundForRunway   = Math.max(0, needed - cash);
+  document.getElementById('fund-for-runway').textContent = fmtINR(fundForRunway);
+
+  // 2. Funding to reach break-even
+  let fundForBE = null;
+  let beSub = 'Complete the Break-Even section first';
+  if (beMonths === 0) {
+    fundForBE = 0;
+    beSub = 'Already at break-even!';
+  } else if (beMonths !== null && beMonths > 0 && netBurn > 0) {
+    fundForBE = Math.max(0, netBurn * beMonths - cash);
+    beSub = `to sustain ${beMonths} months until break-even`;
+  } else if (beMonths !== null && beMonths > 120) {
+    beSub = 'Break-even is >120 months away — review pricing';
+  }
+  document.getElementById('fund-for-be').textContent  = fundForBE !== null ? fmtINR(fundForBE) : '—';
+  document.getElementById('fund-be-sub').textContent  = beSub;
+
+  // 3. Recommended raise
+  const higher       = fundForBE !== null ? Math.max(fundForRunway, fundForBE) : fundForRunway;
+  const recommended  = higher * 1.2;
+  document.getElementById('fund-recommended').textContent = fmtINR(recommended);
+
+  // 4. Funding stage
+  const stagePillEl   = document.getElementById('fund-stage-pill');
+  const stageDetailsEl = document.getElementById('fund-stage-details');
+  let stageName, stageColor, stageBg, stageBorder, stageDesc;
+
+  if (recommended < 5000000) {
+    stageName  = '👨‍👩‍👧 Friends & Family / Angel';
+    stageColor = 'var(--amber)';
+    stageBg    = 'rgba(255,184,77,0.10)';
+    stageBorder= 'rgba(255,184,77,0.35)';
+    stageDesc  = 'Typical range: ₹5L – ₹50L. Raise from close network, friends, family, and early-stage angels.';
+  } else if (recommended < 20000000) {
+    stageName  = '👼 Angel / Pre-Seed';
+    stageColor = 'var(--primary)';
+    stageBg    = 'rgba(108,99,255,0.10)';
+    stageBorder= 'rgba(108,99,255,0.35)';
+    stageDesc  = 'Typical range: ₹50L – ₹2Cr. Target angel networks, syndicates, and micro-VCs.';
+  } else if (recommended < 100000000) {
+    stageName  = '🌱 Seed Round';
+    stageColor = 'var(--secondary)';
+    stageBg    = 'rgba(0,212,170,0.10)';
+    stageBorder= 'rgba(0,212,170,0.35)';
+    stageDesc  = 'Typical range: ₹2Cr – ₹10Cr. Target seed-stage VCs, leading angels, and family offices.';
+  } else {
+    stageName  = '🏦 Series A';
+    stageColor = 'var(--green)';
+    stageBg    = 'rgba(0,212,170,0.15)';
+    stageBorder= 'rgba(0,212,170,0.45)';
+    stageDesc  = 'Typical range: ₹10Cr+. Institutional VCs — you\'ll need proven traction and solid unit economics.';
+  }
+
+  stagePillEl.innerHTML = `<div class="stage-pill" style="color:${stageColor};background:${stageBg};border-color:${stageBorder}">${stageName}</div>`;
+  stageDetailsEl.textContent = stageDesc;
+
+  document.getElementById('fund-advice').innerHTML = `
+    <div class="helper-note" style="margin-top:4px">
+      💡 <span><strong>Fundraising tip:</strong> Start investor conversations 6 months before you need the money. Always raise for 18+ months of runway so you're never negotiating from desperation.</span>
+    </div>`;
+
+  // Tooltips
+  setTip('fund-for-runway',
+    `Net Burn (${fmtINR(netBurn)}) × ${targetMonths} months\n− Cash (${fmtINR(cash)})\n= ${fmtINR(fundForRunway)}`);
+  if (fundForBE !== null && fundForBE > 0 && beMonths) {
+    setTip('fund-for-be',
+      `Net Burn (${fmtINR(netBurn)}) × ${beMonths} months (to break-even)\n− Cash (${fmtINR(cash)})\n= ${fmtINR(fundForBE)}`);
+  } else if (fundForBE === 0) {
+    setTip('fund-for-be', 'Already at break-even — no funding needed for this milestone');
+  } else { setTip('fund-for-be', ''); }
+  setTip('fund-recommended',
+    `max(Runway Fund ${fmtINR(fundForRunway)}, BE Fund ${fmtINR(fundForBE || 0)})\n× 1.2 buffer\n= ${fmtINR(recommended)}`);
+
+  saveInputs();
+  updateProgress();
+}
+
+// ─────────────────────────────────────
+// SCENARIO PLANNING
+// ─────────────────────────────────────
+
+function syncScenarioSection() {
+  const isAdv = document.getElementById('sc-adv-toggle')?.checked;
+  if (isAdv) buildAdvancedSliders();
+  calcScenario();
+}
+
+function toggleAdvancedMode() {
+  const isAdv = document.getElementById('sc-adv-toggle').checked;
+  document.getElementById('sc-simple-sliders').style.display = isAdv ? 'none' : 'block';
+  document.getElementById('sc-adv-sliders').style.display   = isAdv ? 'block' : 'none';
+  if (isAdv) buildAdvancedSliders();
+  calcScenario();
+}
+
+function buildAdvancedSliders() {
+  const container = document.getElementById('sc-adv-cost-sliders');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const cats = [];
+  const std = [
+    ['r-salaries','Salaries'], ['r-rent','Rent'], ['r-software','Software'],
+    ['r-marketing','Marketing'], ['r-delivery','Delivery'], ['r-pgfees','Payment Fees'],
+  ];
+  std.forEach(([id, name]) => {
+    const v = getNum(id);
+    if (v > 0) cats.push({ name, val: v });
+  });
+  fixedExtras.forEach(id => {
+    const v = getNum(id + '-val');
+    const n = document.getElementById(id + '-name')?.value || 'Custom Cost';
+    if (v > 0) cats.push({ name: n, val: v });
+  });
+  variableExtras.forEach(id => {
+    const v = getNum(id + '-val');
+    const n = document.getElementById(id + '-name')?.value || 'Custom Cost';
+    if (v > 0) cats.push({ name: n, val: v });
+  });
+
+  if (cats.length === 0) {
+    container.innerHTML = '<div class="helper-note" style="margin-bottom:0">⚠️ <span>No cost categories found. Fill in the Runway section first.</span></div>';
+    return;
+  }
+
+  cats.forEach((c, i) => {
+    const sid = 'sc-advc-' + i;
+    const vid = sid + '-v';
+    container.innerHTML += `
+      <div class="slider-field">
+        <div class="slider-header">
+          <span class="slider-label">${c.name} <span style="font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--text2)">(${fmtINR(c.val)}/mo)</span></span>
+          <span class="slider-val" id="${vid}" style="color:var(--text2)">0%</span>
+        </div>
+        <input type="range" class="sc-range" id="${sid}" data-base="${c.val}" min="-30" max="30" step="5" value="0"
+               oninput="updateSliderUI(this,'${vid}',true);calcScenario()">
+        <div class="slider-ends"><span>−30%</span><span>+30%</span></div>
+      </div>`;
+  });
+}
+
+function computeAdvBurn() {
+  let total = 0;
+  let count = 0;
+  document.querySelectorAll('#sc-adv-cost-sliders input[type=range]').forEach(el => {
+    const base = parseFloat(el.dataset.base) || 0;
+    const pct  = parseFloat(el.value) || 0;
+    total += base * (1 + pct / 100);
+    count++;
+  });
+  return count > 0 ? total : runwayState.totalBurn;
+}
+
+function applyPreset(type) {
+  const isAdv = document.getElementById('sc-adv-toggle')?.checked;
+  const P = { worst: { rev:-30, cost:20, g:-50 }, base: { rev:0, cost:0, g:0 }, best: { rev:30, cost:0, g:30 } };
+  const p = P[type];
+
+  if (!isAdv) {
+    setSlider('sc-revenue', p.rev,  'sc-revenue-val', false);
+    setSlider('sc-cost',    p.cost, 'sc-cost-val',    true);
+    setSlider('sc-growth',  p.g,    'sc-growth-val',  false);
+  } else {
+    setSlider('sc-adv-revenue', p.rev, 'sc-adv-revenue-val', false);
+    setSlider('sc-adv-growth',  p.g,   'sc-adv-growth-val',  false);
+    document.querySelectorAll('#sc-adv-cost-sliders input[type=range]').forEach(el => {
+      el.value = p.cost;
+      updateSliderUI(el, el.id + '-v', true);
+    });
+  }
+  calcScenario();
+}
+
+function setSlider(id, value, valId, isCostType) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = value;
+  updateSliderUI(el, valId, isCostType);
+}
+
+function updateSliderUI(el, valId, isCostType) {
+  const v   = parseFloat(el.value) || 0;
+  const min = parseFloat(el.min);
+  const max = parseFloat(el.max);
+  const pct = ((v - min) / (max - min)) * 100;
+
+  const valEl = document.getElementById(valId);
+  if (valEl) {
+    valEl.textContent = (v > 0 ? '+' : '') + v + '%';
+    // Colour the value label: green = good, red = bad, neutral = text2
+    if (v === 0) {
+      valEl.style.color = 'var(--text2)';
+    } else {
+      const goodIsPositive = !isCostType;
+      valEl.style.color = ((goodIsPositive && v > 0) || (!goodIsPositive && v < 0))
+        ? 'var(--green)' : 'var(--red)';
+    }
+  }
+
+  // Track fill colour
+  const goodIsPositive = !isCostType;
+  const fillColor = v === 0 ? 'var(--primary)'
+    : ((goodIsPositive && v > 0) || (!goodIsPositive && v < 0)) ? '#00D4AA' : '#FF6B6B';
+  el.style.background = `linear-gradient(to right,${fillColor} 0%,${fillColor} ${pct}%,var(--bg3) ${pct}%,var(--bg3) 100%)`;
+}
+
+function computeInvestorScoreFrom({ runwayMonths, ratio, revGrowth, gmPct, burnEff }) {
+  const rm = runwayMonths === Infinity ? 999 : (runwayMonths || 0);
+  return (rm >= 18 ? 20 : rm >= 12 ? 15 : rm >= 6 ? 10 : 5)
+    + (ratio >= 5 ? 25 : ratio >= 3 ? 20 : ratio >= 1 ? 10 : 0)
+    + (revGrowth >= 20 ? 25 : revGrowth >= 10 ? 18 : revGrowth >= 5 ? 10 : 5)
+    + (gmPct >= 60 ? 15 : gmPct >= 40 ? 10 : gmPct >= 20 ? 5 : 2)
+    + (burnEff >= 0.75 ? 15 : burnEff >= 0.5 ? 10 : burnEff >= 0.25 ? 5 : 2);
+}
+
+function calcScenario() {
+  const hasData = runwayState.totalBurn > 0 || runwayState.cash > 0;
+  const noDataEl = document.getElementById('sc-no-data');
+  if (noDataEl) noDataEl.style.display = hasData ? 'none' : 'block';
+  if (!hasData) { updateProgress(); return; }
+
+  const isAdv = document.getElementById('sc-adv-toggle')?.checked;
+  const { totalBurn, revenue, cash } = runwayState;
+  const baseGrowthPct = getNum('be-growth');
+  const custs   = getNum('be-custs');
+  const gmPct   = parseFloat(document.getElementById('u-gm')?.value || '0') || 0;
+  const invGrow = getNum('inv-growth');
+  const { ratio } = unitState;
+  const { beCustomers } = beState;
+
+  // Your-scenario slider values
+  const rChg  = isAdv ? (parseFloat(document.getElementById('sc-adv-revenue')?.value) || 0)
+                      : (parseFloat(document.getElementById('sc-revenue')?.value) || 0);
+  const gChg  = isAdv ? (parseFloat(document.getElementById('sc-adv-growth')?.value) || 0)
+                      : (parseFloat(document.getElementById('sc-growth')?.value) || 0);
+  const cChg  = isAdv ? null : (parseFloat(document.getElementById('sc-cost')?.value) || 0);
+  const yourBurn = isAdv ? computeAdvBurn() : totalBurn * (1 + (cChg || 0) / 100);
+
+  function computeScenario(revPct, scBurn, growthPct) {
+    const scRev    = revenue * (1 + revPct / 100);
+    const scNet    = Math.max(0, scBurn - scRev);
+    const scRwy    = scNet <= 0 ? Infinity : cash > 0 ? cash / scNet : 0;
+
+    const baseG    = baseGrowthPct / 100;
+    const scG      = Math.max(0, baseG * (1 + growthPct / 100));
+    let scBE       = null;
+    if (beCustomers !== null && beCustomers !== Infinity && custs > 0) {
+      if (custs >= beCustomers) {
+        scBE = 0;
+      } else if (scG > 0) {
+        scBE = Math.min(999, Math.ceil(Math.log(beCustomers / custs) / Math.log(1 + scG)));
+      }
+    }
+
+    const scBurnEff = scBurn > 0 ? scRev / scBurn : 0;
+    const scRm      = scRwy === Infinity ? 999 : scRwy;
+    const scScore   = computeInvestorScoreFrom({
+      runwayMonths: scRm,
+      ratio,
+      revGrowth: Math.max(0, invGrow * (1 + growthPct / 100)),
+      gmPct,
+      burnEff: scBurnEff,
+    });
+    const scFund    = scNet > 0 ? Math.max(0, scNet * 18 - cash) : 0;
+    return { scBurn, scRev, scNet, scRwy, scBE, scScore, scFund };
+  }
+
+  // Fixed preset scenarios: Worst = -30%/+20%/-50%, Best = +30%/0%/+30%
+  const worst = computeScenario(-30, totalBurn * 1.20, -50);
+  const yours = computeScenario(rChg, yourBurn, gChg);
+  const best  = computeScenario(+30, totalBurn,        +30);
+
+  renderSCCol('sc-w', worst);
+  renderSCCol('sc-y', yours);
+  renderSCCol('sc-b', best);
+
+  // Update middle column header
+  let midHead = '📊 Your Scenario';
+  if (!isAdv && rChg === 0 && (cChg || 0) === 0 && gChg === 0) midHead = '📊 Base Case';
+  else if (!isAdv && rChg === -30 && (cChg || 0) === 20 && gChg === -50) midHead = '🔴 Worst Case';
+  else if (!isAdv && rChg === 30 && (cChg || 0) === 0 && gChg === 30)  midHead = '🟢 Best Case';
+  document.getElementById('sc-yours-head').textContent = midHead;
+
+  saveInputs();
+  updateProgress();
+}
+
+function renderSCCol(prefix, sc) {
+  const { scBurn, scNet, scRwy, scBE, scScore, scFund } = sc;
+
+  document.getElementById(prefix + '-burn').textContent = fmtINR(scBurn);
+
+  const rwEl  = document.getElementById(prefix + '-runway');
+  const rwSub = document.getElementById(prefix + '-runway-sub');
+  if (scRwy === Infinity) {
+    rwEl.textContent = '∞';
+    rwEl.style.color = 'var(--green)';
+    if (rwSub) rwSub.textContent = 'Cash-flow positive';
+  } else {
+    const rm = Math.floor(scRwy);
+    rwEl.textContent = rm + ' mo';
+    rwEl.style.color = rm >= 18 ? 'var(--green)' : rm >= 6 ? 'var(--amber)' : 'var(--red)';
+    if (rwSub) rwSub.textContent = dateAhead(rm);
+  }
+
+  const beEl = document.getElementById(prefix + '-be');
+  if (scBE === null) {
+    beEl.textContent = '—';
+    beEl.style.color = 'var(--text2)';
+  } else if (scBE === 0) {
+    beEl.textContent = 'Now';
+    beEl.style.color = 'var(--green)';
+  } else {
+    beEl.textContent = (scBE > 120 ? '>120' : scBE) + ' mo';
+    beEl.style.color = scBE <= 12 ? 'var(--green)' : scBE <= 24 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  const scEl = document.getElementById(prefix + '-score');
+  scEl.textContent = scScore + '/100';
+  scEl.style.color = scScore >= 70 ? 'var(--green)' : scScore >= 50 ? 'var(--amber)' : 'var(--red)';
+
+  document.getElementById(prefix + '-fund').textContent = fmtINR(scFund);
+}
+
+// ─────────────────────────────────────
+// Theme
+// ─────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light-mode');
+  const btn = document.getElementById('theme-btn');
+  if (btn) {
+    btn.textContent = isLight ? '☀️' : '🌙';
+    btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+  }
+  localStorage.setItem('cfo_theme', isLight ? 'light' : 'dark');
+}
+
+// ─────────────────────────────────────
+// LocalStorage persistence
+// ─────────────────────────────────────
+// TOOLTIP HELPER
+// ─────────────────────────────────────
+function setTip(id, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (text) {
+    el.setAttribute('data-tooltip', text);
+    el.classList.add('has-tooltip');
+  } else {
+    el.removeAttribute('data-tooltip');
+    el.classList.remove('has-tooltip');
+  }
+}
+
+// ─────────────────────────────────────
+// GENERATE INVESTOR REPORT (PDF)
+// ─────────────────────────────────────
+function generateReport() {
+  if (typeof window.jspdf === 'undefined') {
+    alert('PDF library is still loading. Please wait a moment and try again.');
+    return;
+  }
+  if (!company) {
+    alert('Please complete the Welcome screen first to set up your company details.');
+    return;
+  }
+
+  // Disable button while generating
+  ['report-fab','sidebar-report-btn'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.disabled = true; b.textContent = '⏳ Generating...'; }
+  });
+
+  setTimeout(() => {
+    try { _buildPDF(); } catch(e) { console.error(e); alert('Error generating PDF: ' + e.message); }
+    ['report-fab','sidebar-report-btn'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) {
+        b.disabled = false;
+        b.innerHTML = id === 'report-fab' ? '📄 Investor Report' : '📄 Generate Report';
+      }
+    });
+  }, 50);
+}
+
+function _buildPDF() {
+  const { jsPDF } = window.jspdf;
+
+  // ── Page constants ──────────────────────────────────────
+  const PW = 210, PH = 297;
+  const ML = 14, MR = 14, CW = PW - ML - MR;
+
+  // ── Palette (RGB) ───────────────────────────────────────
+  const C = {
+    primary: [108, 99, 255],
+    teal:    [0, 190, 155],
+    amber:   [220, 155, 40],
+    red:     [210, 80, 80],
+    navy:    [15, 15, 26],
+    text:    [28, 28, 56],
+    muted:   [95, 95, 145],
+    white:   [255, 255, 255],
+    border:  [215, 215, 240],
+    offwhite:[248, 248, 253],
+  };
+
+  // ── Data gathering ──────────────────────────────────────
+  const co = company;
+  const { totalFixed, totalVar, totalBurn, revenue, cash, netBurn, runwayMonths } = runwayState;
+  const { cac, ltv, ratio } = unitState;
+  const { beCustomers, beMonths } = beState;
+
+  const gmPctRaw   = parseFloat(document.getElementById('u-gm')?.value || '0') || 0;
+  const arpu       = getNum('u-arpu');
+  const custs      = getNum('be-custs');
+  const revGrowth  = getNum('inv-growth');
+  const targetMonths = getNum('fund-target') || 18;
+
+  // Completion flags
+  const runwayDone = totalBurn > 0 || cash > 0;
+  const unitDone   = cac > 0 || ltv > 0;
+  const beDone     = beCustomers !== null;
+  const fundDone   = runwayDone;
+
+  // Investor score
+  const rm2       = runwayMonths === Infinity ? 999 : (runwayMonths || 0);
+  const burnEff   = totalBurn > 0 ? revenue / totalBurn : 0;
+  const rScore    = rm2 >= 18 ? 20 : rm2 >= 12 ? 15 : rm2 >= 6 ? 10 : 5;
+  const lScore    = ratio >= 5 ? 25 : ratio >= 3 ? 20 : ratio >= 1 ? 10 : 0;
+  const gScore    = revGrowth >= 20 ? 25 : revGrowth >= 10 ? 18 : revGrowth >= 5 ? 10 : 5;
+  const mScore    = gmPctRaw >= 60 ? 15 : gmPctRaw >= 40 ? 10 : gmPctRaw >= 20 ? 5 : 2;
+  const bScore    = burnEff >= 0.75 ? 15 : burnEff >= 0.5 ? 10 : burnEff >= 0.25 ? 5 : 2;
+  const invTotal  = rScore + lScore + gScore + mScore + bScore;
+  const invVerdict = invTotal >= 85 ? 'Series A Ready'
+    : invTotal >= 70 ? 'Almost Investor-Ready'
+    : invTotal >= 50 ? 'Early Stage' : 'Not Investor-Ready Yet';
+  const invCol    = invTotal >= 85 ? C.teal : invTotal >= 70 ? C.amber : invTotal >= 50 ? C.primary : C.red;
+
+  // Funding
+  const fundForRunway = runwayDone ? Math.max(0, netBurn * targetMonths - cash) : 0;
+  let fundForBE = null;
+  if (beMonths === 0) fundForBE = 0;
+  else if (beMonths !== null && beMonths > 0 && netBurn > 0) fundForBE = Math.max(0, netBurn * beMonths - cash);
+  const recommended = Math.max(fundForRunway, fundForBE || 0) * 1.2;
+  const stageClean = recommended < 5000000 ? 'Friends & Family / Angel'
+    : recommended < 20000000 ? 'Angel / Pre-Seed'
+    : recommended < 100000000 ? 'Seed Round' : 'Series A';
+  const stageCol = recommended < 20000000 ? C.amber : C.teal;
+
+  // ── Helpers ────────────────────────────────────────────
+  const now = new Date();
+  const monthYear = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  const dateStr   = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const moAbbr    = now.toLocaleDateString('en-IN', { month: 'short' });
+  const yr        = now.getFullYear();
+
+  function fmt(n) {
+    if (n === null || n === undefined || (typeof n === 'number' && isNaN(n))) return '--';
+    if (n === Infinity) return 'Infinite';
+    if (n === 0) return 'Rs. 0';
+    if (n >= 10000000) return 'Rs. ' + (n / 10000000).toFixed(2) + ' Cr';
+    if (n >= 100000)   return 'Rs. ' + (n / 100000).toFixed(2) + ' L';
+    if (n >= 1000)     return 'Rs. ' + (n / 1000).toFixed(1) + 'K';
+    return 'Rs. ' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  // ── jsPDF init ─────────────────────────────────────────
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  let y = 0;
+
+  function sf(size, style = 'normal') { doc.setFontSize(size); doc.setFont('helvetica', style); }
+  function tc(r, g, b)  { doc.setTextColor(r, g, b); }
+  function fc(r, g, b)  { doc.setFillColor(r, g, b); }
+  function dc(r, g, b)  { doc.setDrawColor(r, g, b); }
+  function T(str, x, yy, opts) { doc.text(String(str), x, yy, opts || {}); }
+  function R(x, yy, w, h) { doc.rect(x, yy, w, h, 'F'); }
+
+  function newPage() { doc.addPage(); y = 22; }
+  function checkY(need) { if (y + (need || 14) > PH - 22) newPage(); }
+
+  // ── PAGE HEADER (decorative strip for p2+) ─────────────
+  function pageHeader2() {
+    fc(...C.navy); R(0, 0, PW, 10);
+    fc(...C.primary); R(0, 0, PW, 2);
+    sf(7.5, 'bold'); tc(...C.teal);
+    T('Track  |  ' + co.name, ML, 7);
+    sf(7); tc(180, 180, 215);
+    T(monthYear, PW - MR, 7, { align: 'right' });
+    y = 18;
+  }
+
+  // ── SECTION HEADER ─────────────────────────────────────
+  function secHeader(title, col) {
+    checkY(16);
+    y += 3;
+    // tint bg
+    fc(Math.min(255, col[0] * 0.12 + 235), Math.min(255, col[1] * 0.12 + 235), Math.min(255, col[2] * 0.12 + 235));
+    R(ML, y, CW, 8.5);
+    // accent bar
+    fc(...col); R(ML, y, 3.5, 8.5);
+    sf(8.5, 'bold'); tc(...col);
+    T(title, ML + 7, y + 6);
+    y += 11.5;
+  }
+
+  // ── METRIC ROW ─────────────────────────────────────────
+  function row(label, value, col) {
+    checkY(8);
+    sf(8); tc(...C.muted);
+    T(label, ML + 4, y + 4.5);
+    sf(9, 'bold'); tc(...(col || C.text));
+    T(String(value), ML + CW, y + 4.5, { align: 'right' });
+    dc(...C.border); doc.setLineWidth(0.15);
+    doc.line(ML + 4, y + 7, ML + CW, y + 7);
+    y += 8;
+  }
+
+  // ── HIGHLIGHT BOX ──────────────────────────────────────
+  function highlight(text, col) {
+    const lines = doc.splitTextToSize(text, CW - 10);
+    const h = lines.length * 4.5 + 5.5;
+    checkY(h + 3);
+    fc(Math.min(255, col[0] * 0.15 + 236), Math.min(255, col[1] * 0.15 + 236), Math.min(255, col[2] * 0.15 + 236));
+    R(ML, y, CW, h);
+    sf(8.5, 'bold'); tc(...col);
+    lines.forEach((ln, i) => T(ln, ML + 5, y + 5 + i * 4.5));
+    y += h + 4;
+  }
+
+  // ── INCOMPLETE PLACEHOLDER ─────────────────────────────
+  function incomplete() {
+    checkY(12);
+    fc(...C.offwhite); R(ML, y, CW, 9);
+    sf(8.5); tc(...C.muted);
+    T('Not yet completed -- fill in this section to include it in the report.', ML + 5, y + 6);
+    y += 12;
+  }
+
+  // ── PAGE 1: COVER HEADER ───────────────────────────────
+  fc(...C.navy); R(0, 0, PW, 56);
+  fc(...C.primary); R(0, 0, PW, 3);
+
+  sf(7.5, 'bold'); tc(...C.teal);
+  T('Track  --  Investor Intelligence Platform', ML, 11);
+  sf(7); tc(170, 170, 210);
+  T(monthYear, PW - MR, 11, { align: 'right' });
+
+  sf(21, 'bold'); tc(...C.white);
+  T(co.name || 'Your Company', PW / 2, 27, { align: 'center' });
+
+  sf(9.5, 'bold'); tc(...C.teal);
+  T('INVESTOR READINESS REPORT', PW / 2, 36, { align: 'center' });
+
+  const meta = [co.industry, co.stage, co.year ? 'Since ' + co.year : ''].filter(Boolean).join('   |   ');
+  sf(8); tc(190, 190, 220);
+  T(meta, PW / 2, 44, { align: 'center' });
+
+  // Score pill in header
+  const scoreLabel = invVerdict.toUpperCase();
+  sf(8, 'bold'); tc(...invCol);
+  T('Score ' + invTotal + '/100  --  ' + scoreLabel, PW / 2, 52, { align: 'center' });
+
+  y = 64;
+
+  // ── SECTION 1: RUNWAY ──────────────────────────────────
+  secHeader('SECTION 1   RUNWAY & CASH POSITION', C.teal);
+
+  if (!runwayDone) {
+    incomplete();
+  } else {
+    row('Cash in Bank', fmt(cash));
+    row('Monthly Revenue', fmt(revenue));
+    row('Fixed Costs (monthly)', fmt(totalFixed));
+    row('Variable Costs (monthly)', fmt(totalVar));
+    row('Total Monthly Burn', fmt(totalBurn), C.red);
+    row('Net Monthly Burn  (burn minus revenue)', fmt(netBurn), netBurn > 0 ? C.red : C.teal);
+
+    if (runwayMonths === Infinity || netBurn <= 0) {
+      row('Runway', 'Cash-Flow Positive', C.teal);
+      row('Cash-Out Date', 'No risk -- already profitable', C.teal);
+    } else {
+      const rmo = Math.floor(runwayMonths);
+      const rCol = rmo >= 18 ? C.teal : rmo >= 6 ? C.amber : C.red;
+      row('Runway', rmo + ' months', rCol);
+      const cout = new Date();
+      cout.setMonth(cout.getMonth() + rmo);
+      row('Estimated Cash-Out', cout.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }), rCol);
+      const rStatus = rmo >= 18 ? 'Strong Runway' : rmo >= 12 ? 'Adequate -- Begin Fundraising' : rmo >= 6 ? 'Monitor Closely' : 'CRITICAL -- Fundraise Immediately';
+      highlight('Status: ' + rStatus, rCol);
+    }
+  }
+
+  // ── SECTION 2: UNIT ECONOMICS ──────────────────────────
+  secHeader('SECTION 2   UNIT ECONOMICS', C.primary);
+
+  if (!unitDone) {
+    incomplete();
+  } else {
+    if (cac > 0) row('Customer Acquisition Cost (CAC)', fmt(cac));
+    if (ltv > 0) row('Lifetime Value (LTV)', fmt(ltv));
+    if (ratio > 0) {
+      const rCol2 = ratio >= 3 ? C.teal : ratio >= 1 ? C.amber : C.red;
+      row('LTV : CAC Ratio', ratio.toFixed(2) + 'x', rCol2);
+    }
+    if (arpu > 0 && cac > 0) {
+      const pb = cac / arpu;
+      row('Payback Period (at current ARPU)', pb.toFixed(1) + ' months', pb <= 12 ? C.teal : pb <= 24 ? C.amber : C.red);
+    }
+    if (arpu > 0) row('Avg Revenue Per User (ARPU)', fmt(arpu) + '/mo');
+    if (gmPctRaw > 0) row('Gross Margin', gmPctRaw.toFixed(0) + '%', gmPctRaw >= 60 ? C.teal : gmPctRaw >= 40 ? C.amber : C.red);
+
+    if (ratio > 0) {
+      const rTxt = ratio >= 5 ? 'Excellent (>5x) -- investor-grade unit economics'
+        : ratio >= 3 ? 'Healthy (>3x) -- sustainable acquisition'
+        : ratio >= 1 ? 'Marginal (1-3x) -- improve retention and reduce CAC'
+        : 'Negative (<1x) -- pause paid acquisition immediately';
+      highlight('Unit Economics: ' + rTxt, ratio >= 3 ? C.teal : ratio >= 1 ? C.amber : C.red);
+    }
+  }
+
+  // ── SECTION 3: BREAK-EVEN ──────────────────────────────
+  secHeader('SECTION 3   BREAK-EVEN ANALYSIS', C.amber);
+
+  if (!beDone) {
+    incomplete();
+  } else {
+    row('Current Customers', custs > 0 ? custs.toLocaleString('en-IN') : '0');
+    if (beCustomers === Infinity) {
+      row('Break-Even Customers', 'N/A -- negative contribution margin');
+    } else if (beCustomers !== null) {
+      row('Break-Even Customer Count', beCustomers.toLocaleString('en-IN'));
+      if (custs > 0 && beCustomers > 0) {
+        const pct = Math.min(100, Math.round((custs / beCustomers) * 100));
+        row('Progress to Break-Even', pct + '%', pct >= 80 ? C.teal : pct >= 50 ? C.amber : C.red);
+      }
+    }
+    if (beMonths !== null) {
+      if (beMonths === 0) {
+        row('Break-Even Status', 'Achieved', C.teal);
+        highlight('You are already at break-even -- every new customer adds profit.', C.teal);
+      } else {
+        const bCol = beMonths <= 12 ? C.teal : beMonths <= 24 ? C.amber : C.red;
+        row('Months to Break-Even', beMonths + ' months', bCol);
+        const beDate = new Date();
+        beDate.setMonth(beDate.getMonth() + beMonths);
+        row('Estimated Break-Even Date', beDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }), bCol);
+        const beTxt = beMonths <= 12 ? 'On track -- break-even is close. Protect your growth rate.'
+          : beMonths <= 24 ? 'Moderate timeline -- watch churn and consider pricing improvements.'
+          : 'Extended timeline -- review pricing strategy and accelerate customer acquisition.';
+        highlight(beTxt, bCol);
+      }
+    }
+  }
+
+  // ── SECTION 4: INVESTOR SCORE ──────────────────────────
+  checkY(55);
+  secHeader('SECTION 4   INVESTOR READINESS SCORE', invCol);
+
+  // Big score box
+  checkY(22);
+  fc(Math.min(255, invCol[0] * 0.18 + 232), Math.min(255, invCol[1] * 0.18 + 232), Math.min(255, invCol[2] * 0.18 + 232));
+  R(ML, y, CW, 20);
+  sf(26, 'bold'); tc(...invCol);
+  T(invTotal + ' / 100', PW / 2, y + 13, { align: 'center' });
+  sf(8.5, 'bold'); tc(...invCol);
+  T(invVerdict.toUpperCase(), PW / 2, y + 19, { align: 'center' });
+  y += 22;
+
+  // Score bar
+  checkY(8);
+  fc(...C.border); R(ML, y, CW, 3.5);
+  fc(...invCol); R(ML, y, CW * Math.min(1, invTotal / 100), 3.5);
+  y += 7;
+
+  // Parameter breakdown
+  const params = [
+    ['Runway (max 20 pts)',         rScore, 20, rm2 < 999 ? rm2 + ' months' : 'Cash-flow positive'],
+    ['LTV:CAC Ratio (max 25 pts)',  lScore, 25, ratio > 0 ? ratio.toFixed(1) + 'x' : 'No data'],
+    ['Revenue Growth (max 25 pts)', gScore, 25, revGrowth > 0 ? revGrowth + '% monthly' : 'Not entered'],
+    ['Gross Margin (max 15 pts)',   mScore, 15, gmPctRaw > 0 ? gmPctRaw.toFixed(0) + '%' : 'Not entered'],
+    ['Burn Efficiency (max 15 pts)',bScore, 15, totalBurn > 0 ? (burnEff * 100).toFixed(0) + '% rev/burn' : 'No data'],
+  ];
+
+  checkY(8);
+  sf(7.5, 'bold'); tc(...C.muted);
+  T('PARAMETER', ML + 4, y + 4);
+  T('CURRENT VALUE', ML + 82, y + 4);
+  T('SCORE', ML + CW, y + 4, { align: 'right' });
+  y += 6;
+
+  params.forEach(([name, score, max, detail], i) => {
+    checkY(10);
+    const pct2 = score / max;
+    const pCol2 = pct2 >= 0.8 ? C.teal : pct2 >= 0.5 ? C.amber : C.red;
+
+    if (i % 2 === 0) { fc(...C.offwhite); R(ML, y, CW, 9); }
+
+    sf(8); tc(...C.text);
+    T(name, ML + 4, y + 4.5);
+    sf(7.5); tc(...C.muted);
+    T(detail, ML + 82, y + 4.5);
+    sf(8.5, 'bold'); tc(...pCol2);
+    T(score + ' / ' + max, ML + CW, y + 4.5, { align: 'right' });
+
+    // Mini bar
+    fc(220, 220, 240); R(ML + 4, y + 6.5, 52, 1.2);
+    if (pct2 > 0) { fc(...pCol2); R(ML + 4, y + 6.5, 52 * pct2, 1.2); }
+
+    y += 10;
+  });
+
+  // Weak-area advice
+  const advice = [];
+  if (rScore < 20) advice.push('Extend runway to 18+ months before raising. Reduce burn or increase revenue.');
+  if (lScore < 20) advice.push('Improve LTV:CAC ratio -- target 3x minimum. Increase retention and reduce acquisition cost.');
+  if (gScore < 18) advice.push('Accelerate monthly revenue growth -- target 15%+ MoM to be investor-ready.');
+  if (mScore < 10) advice.push('Improve gross margin -- target 60%+ for SaaS, 40%+ for marketplace.');
+  if (bScore < 10) advice.push('Increase revenue efficiency -- aim for 75%+ revenue coverage of burn.');
+
+  if (advice.length) {
+    checkY(10);
+    y += 3;
+    sf(7.5, 'bold'); tc(...C.amber);
+    T('KEY ACTIONS TO IMPROVE YOUR SCORE:', ML + 4, y + 4);
+    y += 7;
+    advice.forEach(item => {
+      const lines = doc.splitTextToSize('  *  ' + item, CW - 8);
+      checkY(lines.length * 5 + 2);
+      sf(8); tc(...C.text);
+      lines.forEach((ln, li) => T(ln, ML + 4, y + 4 + li * 4.8));
+      y += lines.length * 4.8 + 4;
+    });
+  }
+
+  // ── SECTION 5: FUNDING REQUIREMENT ─────────────────────
+  checkY(45);
+  secHeader('SECTION 5   FUNDING REQUIREMENT', C.teal);
+
+  if (!fundDone) {
+    incomplete();
+  } else {
+    row('Runway Target Set', targetMonths + ' months');
+    row('Current Cash Available', fmt(cash));
+    row('Net Monthly Burn', fmt(netBurn), netBurn > 0 ? C.red : C.teal);
+
+    checkY(4); y += 3;
+
+    row('Funding for ' + targetMonths + '-Month Runway', fundForRunway > 0 ? fmt(fundForRunway) : 'Fully funded for this period', fundForRunway > 0 ? C.text : C.teal);
+    row('Funding to Reach Break-Even', fundForBE === null ? 'Complete break-even section' : fundForBE === 0 ? 'Already at break-even' : fmt(fundForBE), fundForBE === 0 ? C.teal : C.text);
+
+    checkY(4); y += 3;
+
+    row('Recommended Raise Amount  (1.2x buffer)', recommended > 0 ? fmt(recommended) : 'No raise needed', recommended > 0 ? C.primary : C.teal);
+    row('Suggested Funding Stage', stageClean, stageCol);
+
+    const fundNote = recommended > 0
+      ? 'Target a ' + stageClean + ' round of ' + fmt(recommended) + '. Begin investor conversations at least 6 months before runway expires.'
+      : 'Your current cash position covers the target runway. Focus on growth and unit economics before raising.';
+    highlight(fundNote, stageCol);
+  }
+
+  // ── FOOTERS ON ALL PAGES ────────────────────────────────
+  const totalPages = doc.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    if (p > 1) pageHeader2();
+    dc(...C.border); doc.setLineWidth(0.25);
+    doc.line(ML, PH - 14, PW - MR, PH - 14);
+    sf(7.5); tc(...C.muted);
+    T('Generated on ' + dateStr + '  |  Track Dashboard', ML, PH - 9);
+    T('Page ' + p + ' of ' + totalPages, PW - MR, PH - 9, { align: 'right' });
+  }
+  doc.setPage(totalPages); // restore to last page
+
+  // ── SAVE ────────────────────────────────────────────────
+  const safeName = (co.name || 'Company').replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_');
+  doc.save(safeName + '_Investor_Report_' + moAbbr + yr + '.pdf');
+}
+
+// ─────────────────────────────────────
+function saveInputs() {
+  const ids = [
+    'r-cash','r-revenue','r-salaries','r-rent','r-software',
+    'r-marketing','r-delivery','r-pgfees',
+    'u-mktg','u-sales','u-newcusts','u-arpu','u-lifetime','u-gm',
+    'be-fixed','be-arpu','be-varpc','be-custs','be-growth',
+    'inv-growth','fund-target',
+    'sc-revenue','sc-cost','sc-growth',
+    'sc-adv-revenue','sc-adv-growth',
+  ];
+  const data = {};
+  ids.forEach(id => { data[id] = document.getElementById(id)?.value || ''; });
+  const advToggle = document.getElementById('sc-adv-toggle');
+  if (advToggle) data['sc-adv-on'] = advToggle.checked ? '1' : '0';
+  localStorage.setItem('cfo_inputs', JSON.stringify(data));
+}
+
+function loadInputs() {
+  const raw = localStorage.getItem('cfo_inputs');
+  if (!raw) return;
+  const data = JSON.parse(raw);
+  Object.entries(data).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  // Re-format all money inputs after loading (values may be raw numbers from old saves)
+  document.querySelectorAll('.fmt-inr').forEach(el => { if (el.value) formatInrInput(el); });
+  calcRunway();
+  calcUnit();
+  calcBreakeven();
+  calcInvestor();
+  calcFunding();
+  // Restore slider UIs after values are loaded
+  ['sc-revenue','sc-cost','sc-growth'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const isCost = id === 'sc-cost';
+      updateSliderUI(el, id + '-val', isCost);
+    }
+  });
+  ['sc-adv-revenue','sc-adv-growth'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) updateSliderUI(el, id + '-val', false);
+  });
+  if (data['sc-adv-on'] === '1') {
+    const tog = document.getElementById('sc-adv-toggle');
+    if (tog) { tog.checked = true; toggleAdvancedMode(); }
+  }
+  calcScenario();
+}
+
+// ─────────────────────────────────────
+// Init
+// ─────────────────────────────────────
+(function init() {
+  // Convert static money inputs to text type for Indian formatting
+  const moneyIds = [
+    'r-cash','r-revenue','r-salaries','r-rent','r-software',
+    'r-marketing','r-delivery','r-pgfees',
+    'u-mktg','u-sales','u-newcusts','u-arpu',
+    'be-fixed','be-arpu','be-varpc','be-custs',
+  ];
+  moneyIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.type = 'text';
+    el.setAttribute('inputmode', 'numeric');
+    el.setAttribute('autocomplete', 'off');
+    el.classList.add('fmt-inr');
+  });
+
+  // Restore theme preference
+  if (localStorage.getItem('cfo_theme') === 'light') {
+    document.body.classList.add('light-mode');
+    const btn = document.getElementById('theme-btn');
+    if (btn) { btn.textContent = '☀️'; btn.title = 'Switch to dark mode'; }
+  }
+
+  // Restore session
+  const stored = localStorage.getItem('cfo_company');
+  if (stored) {
+    company = JSON.parse(stored);
+    launchApp();
+    setTimeout(loadInputs, 80);
+  }
+})();
+</script>
+</body>
+</html>
