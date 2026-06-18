@@ -38,9 +38,9 @@
   /* ──────────────────────────────
      WELCOME SCREEN
   ────────────────────────────── */
-  #welcome-screen {
+  #welcome-screen, #auth-screen {
     min-height: 100vh;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 24px;
@@ -48,6 +48,19 @@
                 radial-gradient(ellipse at 70% 80%, rgba(0,212,170,0.08) 0%, transparent 60%),
                 var(--bg);
   }
+  .auth-error {
+    display: none;
+    background: rgba(255,107,107,0.08);
+    border: 1px solid rgba(255,107,107,0.25);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .auth-toggle-link { color: var(--secondary); text-decoration: none; font-weight: 600; cursor: pointer; }
+  .auth-toggle-link:hover { text-decoration: underline; }
 
   .welcome-card {
     background: var(--card);
@@ -968,8 +981,43 @@
   .modal-close:hover { color: var(--red); background: rgba(255,107,107,0.1); }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════
+     AUTH SCREEN (Sign In / Sign Up)
+══════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="welcome-card">
+    <div class="welcome-logo">
+      <div class="logo-icon">📊</div>
+      <div class="logo-text">Track</div>
+    </div>
+
+    <div class="welcome-eyebrow">✦ Secure · Synced to your account</div>
+    <h1 class="welcome-title" id="auth-title">Welcome Back</h1>
+    <p class="welcome-sub" id="auth-sub">Sign in to access your financial dashboard from any device.</p>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="auth-email" placeholder="you@company.com" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-primary" id="auth-submit-btn" onclick="handleAuthSubmit()">Sign In →</button>
+
+    <p class="welcome-footer">
+      <span id="auth-toggle-text">Don't have an account?</span>
+      <a class="auth-toggle-link" id="auth-toggle-link" onclick="toggleAuthMode(event)">Sign up</a>
+    </p>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════
      WELCOME SCREEN
@@ -981,7 +1029,7 @@
       <div class="logo-text">Track</div>
     </div>
 
-    <div class="welcome-eyebrow">✦ Free · No signup required</div>
+    <div class="welcome-eyebrow">✦ Set up your company profile</div>
     <h1 class="welcome-title">Your Financial Co-Pilot</h1>
     <p class="welcome-sub">Investor-grade financial intelligence for early-stage startups. Takes 2 minutes to set up.</p>
 
@@ -1021,7 +1069,7 @@
 
     <button class="btn-primary" onclick="saveCompany()">Launch My Dashboard →</button>
 
-    <p class="welcome-footer">Your data stays on your device. <span>100% private.</span></p>
+    <p class="welcome-footer">Your data is saved securely to your account. <span>Synced everywhere.</span></p>
   </div>
 </div>
 
@@ -1040,6 +1088,7 @@
     <div class="topbar-actions">
       <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Switch to light mode">🌙</button>
       <button class="topbar-reset" onclick="resetApp()">↺ Reset</button>
+      <button class="topbar-reset" onclick="signOut()">⎋ Log Out</button>
     </div>
   </div>
 
@@ -1900,6 +1949,15 @@
 
 <script>
 // ─────────────────────────────────────
+// Supabase client
+// ─────────────────────────────────────
+const SUPABASE_URL = 'https://oolhucmthakdwqhafwsd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_dfaEEH4DQk19BK72uZ1TgQ_7WBHVUYC';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser = null;
+let authMode = 'signin';
+
+// ─────────────────────────────────────
 // State & custom cost tracking
 // ─────────────────────────────────────
 let company = null;
@@ -1917,9 +1975,104 @@ let beState     = { beCustomers: null, beMonths: null, contribution: 0 };
 const SECTIONS = ['runway', 'unit', 'breakeven', 'investor', 'funding', 'scenario'];
 
 // ─────────────────────────────────────
+// Auth (Supabase)
+// ─────────────────────────────────────
+function toggleAuthMode(e) {
+  if (e) e.preventDefault();
+  authMode = authMode === 'signin' ? 'signup' : 'signin';
+  const isSignup = authMode === 'signup';
+  document.getElementById('auth-title').textContent = isSignup ? 'Create Your Account' : 'Welcome Back';
+  document.getElementById('auth-sub').textContent = isSignup
+    ? 'Sign up to start tracking your startup finances in the cloud.'
+    : 'Sign in to access your financial dashboard from any device.';
+  document.getElementById('auth-submit-btn').textContent = isSignup ? 'Sign Up →' : 'Sign In →';
+  document.getElementById('auth-toggle-text').textContent = isSignup ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('auth-toggle-link').textContent = isSignup ? 'Sign in' : 'Sign up';
+  hideAuthError();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideAuthError() {
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function handleAuthSubmit() {
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  hideAuthError();
+  if (!email || !password) { showAuthError('Please enter both email and password.'); return; }
+
+  const btn = document.getElementById('auth-submit-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Please wait…';
+
+  try {
+    if (authMode === 'signup') {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data.session) {
+        await onAuthReady(data.session.user);
+      } else {
+        showAuthError('Check your email to confirm your account, then sign in.');
+      }
+    } else {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await onAuthReady(data.user);
+    }
+  } catch (err) {
+    showAuthError(err.message || 'Something went wrong. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+async function onAuthReady(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  await loadCompanyAndApp();
+}
+
+async function loadCompanyAndApp() {
+  const { data, error } = await supabase
+    .from('companies')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  if (error) { console.error('Failed to load company profile:', error); }
+
+  if (data) {
+    company = { name: data.name, industry: data.industry, stage: data.stage, year: data.year || '' };
+    launchApp();
+    await loadInputs();
+  } else {
+    document.getElementById('welcome-screen').style.display = 'flex';
+  }
+}
+
+async function signOut() {
+  await supabase.auth.signOut();
+  currentUser = null;
+  company = null;
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ─────────────────────────────────────
 // Welcome / Company Setup
 // ─────────────────────────────────────
-function saveCompany() {
+async function saveCompany() {
   const name     = document.getElementById('co-name').value.trim();
   const industry = document.getElementById('co-industry').value;
   const stage    = document.getElementById('co-stage').value;
@@ -1929,8 +2082,17 @@ function saveCompany() {
   if (!industry) { shakeField('co-industry'); return; }
   if (!stage)    { shakeField('co-stage');    return; }
 
+  const { error } = await supabase
+    .from('companies')
+    .upsert({ user_id: currentUser.id, name, industry, stage, year, updated_at: new Date().toISOString() });
+
+  if (error) {
+    console.error('Failed to save company profile:', error);
+    alert('Could not save your company profile. Please try again.');
+    return;
+  }
+
   company = { name, industry, stage, year };
-  localStorage.setItem('cfo_company', JSON.stringify(company));
   launchApp();
 }
 
@@ -1949,9 +2111,12 @@ function launchApp() {
   updateProgress();
 }
 
-function resetApp() {
+async function resetApp() {
   if (!confirm('Reset all data and start over?')) return;
-  localStorage.clear();
+  if (currentUser) {
+    await supabase.from('financial_data').delete().eq('user_id', currentUser.id);
+    await supabase.from('companies').delete().eq('user_id', currentUser.id);
+  }
   location.reload();
 }
 
@@ -1967,7 +2132,7 @@ function closeEditProfile() {
   document.getElementById('edit-profile-modal').style.display = 'none';
 }
 
-function saveProfile() {
+async function saveProfile() {
   const name     = document.getElementById('edit-co-name').value.trim();
   const industry = document.getElementById('edit-co-industry').value;
   const stage    = document.getElementById('edit-co-stage').value;
@@ -1976,10 +2141,19 @@ function saveProfile() {
   if (!industry) { shakeField('edit-co-industry'); return; }
   if (!stage)    { shakeField('edit-co-stage');    return; }
 
+  const { error } = await supabase
+    .from('companies')
+    .upsert({ user_id: currentUser.id, name, industry, stage, year: company.year || '', updated_at: new Date().toISOString() });
+
+  if (error) {
+    console.error('Failed to save company profile:', error);
+    alert('Could not save your changes. Please try again.');
+    return;
+  }
+
   company.name     = name;
   company.industry = industry;
   company.stage    = stage;
-  localStorage.setItem('cfo_company', JSON.stringify(company));
 
   document.getElementById('company-chip').textContent = company.name + ' · ' + company.stage;
   document.title = company.name + ' — Track';
@@ -3540,6 +3714,8 @@ function _buildPDF() {
 }
 
 // ─────────────────────────────────────
+let _saveInputsTimer = null;
+
 function saveInputs() {
   const ids = [
     'r-cash','r-revenue','r-salaries','r-rent','r-software',
@@ -3554,13 +3730,29 @@ function saveInputs() {
   ids.forEach(id => { data[id] = document.getElementById(id)?.value || ''; });
   const advToggle = document.getElementById('sc-adv-toggle');
   if (advToggle) data['sc-adv-on'] = advToggle.checked ? '1' : '0';
-  localStorage.setItem('cfo_inputs', JSON.stringify(data));
+
+  clearTimeout(_saveInputsTimer);
+  _saveInputsTimer = setTimeout(() => persistInputs(data), 500);
 }
 
-function loadInputs() {
-  const raw = localStorage.getItem('cfo_inputs');
-  if (!raw) return;
-  const data = JSON.parse(raw);
+async function persistInputs(data) {
+  if (!currentUser) return;
+  const { error } = await supabase
+    .from('financial_data')
+    .upsert({ user_id: currentUser.id, data, updated_at: new Date().toISOString() });
+  if (error) console.error('Failed to save financial data:', error);
+}
+
+async function loadInputs() {
+  if (!currentUser) return;
+  const { data: row, error } = await supabase
+    .from('financial_data')
+    .select('data')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+  if (error) { console.error('Failed to load financial data:', error); return; }
+  if (!row || !row.data) return;
+  const data = row.data;
   Object.entries(data).forEach(([id, val]) => {
     const el = document.getElementById(id);
     if (el) el.value = val;
@@ -3594,7 +3786,7 @@ function loadInputs() {
 // ─────────────────────────────────────
 // Init
 // ─────────────────────────────────────
-(function init() {
+(async function init() {
   // Convert static money inputs to text type for Indian formatting
   const moneyIds = [
     'r-cash','r-revenue','r-salaries','r-rent','r-software',
@@ -3618,13 +3810,24 @@ function loadInputs() {
     if (btn) { btn.textContent = '☀️'; btn.title = 'Switch to dark mode'; }
   }
 
-  // Restore session
-  const stored = localStorage.getItem('cfo_company');
-  if (stored) {
-    company = JSON.parse(stored);
-    launchApp();
-    setTimeout(loadInputs, 80);
+  // Restore session from Supabase Auth
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    await onAuthReady(session.user);
+  } else {
+    document.getElementById('auth-screen').style.display = 'flex';
   }
+
+  // Keep things in sync if the user signs out in another tab
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      company = null;
+      document.getElementById('main-app').style.display = 'none';
+      document.getElementById('welcome-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+  });
 })();
 </script>
 </body>
