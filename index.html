@@ -1953,7 +1953,7 @@
 // ─────────────────────────────────────
 const SUPABASE_URL = 'https://oolhucmthakdwqhafwsd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_dfaEEH4DQk19BK72uZ1TgQ_7WBHVUYC';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser = null;
 let authMode = 'signin';
 
@@ -2014,7 +2014,7 @@ async function handleAuthSubmit() {
 
   try {
     if (authMode === 'signup') {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
       if (error) throw error;
       if (data.session) {
         await onAuthReady(data.session.user);
@@ -2022,7 +2022,7 @@ async function handleAuthSubmit() {
         showAuthError('Check your email to confirm your account, then sign in.');
       }
     } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) throw error;
       await onAuthReady(data.user);
     }
@@ -2041,7 +2041,7 @@ async function onAuthReady(user) {
 }
 
 async function loadCompanyAndApp() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('companies')
     .select('*')
     .eq('user_id', currentUser.id)
@@ -2059,7 +2059,7 @@ async function loadCompanyAndApp() {
 }
 
 async function signOut() {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   currentUser = null;
   company = null;
   document.getElementById('main-app').style.display = 'none';
@@ -2082,7 +2082,7 @@ async function saveCompany() {
   if (!industry) { shakeField('co-industry'); return; }
   if (!stage)    { shakeField('co-stage');    return; }
 
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('companies')
     .upsert({ user_id: currentUser.id, name, industry, stage, year, updated_at: new Date().toISOString() });
 
@@ -2114,8 +2114,8 @@ function launchApp() {
 async function resetApp() {
   if (!confirm('Reset all data and start over?')) return;
   if (currentUser) {
-    await supabase.from('financial_data').delete().eq('user_id', currentUser.id);
-    await supabase.from('companies').delete().eq('user_id', currentUser.id);
+    await supabaseClient.from('financial_data').delete().eq('user_id', currentUser.id);
+    await supabaseClient.from('companies').delete().eq('user_id', currentUser.id);
   }
   location.reload();
 }
@@ -2141,7 +2141,7 @@ async function saveProfile() {
   if (!industry) { shakeField('edit-co-industry'); return; }
   if (!stage)    { shakeField('edit-co-stage');    return; }
 
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('companies')
     .upsert({ user_id: currentUser.id, name, industry, stage, year: company.year || '', updated_at: new Date().toISOString() });
 
@@ -3737,7 +3737,7 @@ function saveInputs() {
 
 async function persistInputs(data) {
   if (!currentUser) return;
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('financial_data')
     .upsert({ user_id: currentUser.id, data, updated_at: new Date().toISOString() });
   if (error) console.error('Failed to save financial data:', error);
@@ -3745,7 +3745,7 @@ async function persistInputs(data) {
 
 async function loadInputs() {
   if (!currentUser) return;
-  const { data: row, error } = await supabase
+  const { data: row, error } = await supabaseClient
     .from('financial_data')
     .select('data')
     .eq('user_id', currentUser.id)
@@ -3811,7 +3811,7 @@ async function loadInputs() {
   }
 
   // Restore session from Supabase Auth
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (session) {
     await onAuthReady(session.user);
   } else {
@@ -3819,7 +3819,7 @@ async function loadInputs() {
   }
 
   // Keep things in sync if the user signs out in another tab
-  supabase.auth.onAuthStateChange((event) => {
+  supabaseClient.auth.onAuthStateChange((event) => {
     if (event === 'SIGNED_OUT') {
       currentUser = null;
       company = null;
